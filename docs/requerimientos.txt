@@ -1,0 +1,209 @@
+﻿1. Propósito, contexto y alcance
+Este documento establece los requisitos funcionales, las condiciones de acceso, las restricciones técnicas y los criterios de verificación del prototipo web para la gestión de objetos perdidos y encontrados en el TecNM Mérida, Campus Poniente.
+1.1 Objetivo del sistema
+Facilitar la difusión interna de objetos perdidos y encontrados, centralizar en prefectura la custodia física y comprobación de propiedad, y proporcionar herramientas administrativas básicas para las cuentas.
+1.2 Alcance
+Aplicación web única y adaptable, de acceso restringido a cuentas institucionales.
+Registro, verificación, inicio de sesión, recuperación/cambio de contraseña y perfil básico.
+Muro cronológico con búsqueda, filtros de tipo, orden y paginación; publicación de Perdido y Encontrado.
+Validación presencial por prefectura, aprobación de Encontrado, devolución física y cierre controlado de Perdido.
+Gestión de cuentas por administrador con confirmaciones, motivos e historial individual.
+Operación y demostración local; correo de verificación/restablecimiento simulado en herramienta local; respaldo SQL y pruebas manuales.
+1.3 Funcionalidades
+La versión no incluye mensajería ni contacto directo entre usuarios, notificaciones automáticas de estado, detección o vinculación automática de coincidencias entre objetos perdidos y encontrados, edición de publicaciones originales, aplicaciones móviles nativas, alojamiento público, administración de roles desde la interfaz, filtros avanzados, auditoría global de cuentas ni módulos de respaldo automático. 
+1.4 Actores
+Actor
+Facultades principales
+Restricciones
+Usuario general
+Registro, inicio de sesión, publicar y consultar, gestionar sus reportes y perfil.
+No ve datos personales de otros autores, no edita publicaciones originales ni cambia su rol o estado de cuenta.
+Prefectura
+Recibir físicamente objetos, aprobar o rechazar Encontrado, marcar Devuelto, revisar solicitudes de cierre y consultar historial gestionado.
+No registra identidad digital de reclamante, no usa mensajes internos entre usuarios.
+Administrador
+Consultar cuentas, activar/desactivar con motivo e historial individual.
+No cambia roles ni elimina cuentas permanentemente; no tiene historial especial de publicaciones.
+2. Reglas transversales del negocio
+Los objetos Encontrado de usuarios generales requieren entrega física a prefectura y aprobación antes de mostrarse en el muro; los Perdido se publican inmediatamente.
+El proceso de recuperación del objeto ocurre presencialmente en prefectura. La identidad del reclamante y el comprobante de entrega no se digitalizan.
+El cierre de un Perdido y la devolución de un Encontrado son procesos independientes, aunque prefectura identifique coincidencias de modo manual.
+Los reportes rechazados y cerrados se conservan para los roles autorizados, pero no aparecen en el muro activo cuando corresponde.
+Un cambio de estado de cuenta no elimina ni cierra automáticamente las publicaciones y no afecta la revisión de Encontrado pendiente según RF-37.
+Las decisiones de autorización se aplican en el servidor, no solamente mediante ocultamiento de opciones en la interfaz.
+Durante la demostración, los correos de verificación y recuperación se capturarán en una herramienta local. Este procedimiento no verifica la titularidad de los buzones institucionales.
+3. Flujos y estados principales
+3.1 Objeto Perdido
+Creación válida por usuario general → Publicado y visible inmediatamente → (opcional) solicitud de cierre por autor → Cierre pendiente y todavía visible → prefectura aprueba: Cerrado y fuera del muro activo; o rechaza con motivo: vuelve a situación activa, el autor ve el motivo y puede solicitar de nuevo. No se permite duplicar solicitudes pendientes.
+3.2 Objeto Encontrado por usuario general
+Creación válida → Pendiente e invisible → entrega física del objeto a prefectura → prefectura confirma recepción y aprueba: Publicado y visible; o rechaza con motivo: Rechazado, invisible y conservado, con opción de crear un reporte nuevo. Tras devolución presencial y comprobación de propiedad: prefectura marca Devuelto y retira del muro activo. Una devolución errónea puede revertirse con motivo y restaurar visibilidad.
+3.3 Cuenta institucional
+Autorregistro con dominio permitido → cuenta sin verificación: sin acceso a áreas protegidas → verificación mediante enlace simulado en entorno local → acceso según rol. El administrador puede desactivar con confirmación y motivo, impidiendo nuevo inicio de sesión; puede reactivar con confirmación y motivo, restaurando el acceso bajo las mismas condiciones de autenticación.
+4. Catálogo completo de requisitos funcionales (RF)
+Los requisitos funcionales se organizan por módulo y conservan sus identificadores RF-09 a RF-92. Los requisitos no funcionales y técnicos se presentan en apartados independientes.
+4.1 Cuentas y autenticación
+RF-09 · Acceso institucional. El acceso a la red social interna se limitará a personas con cuenta institucional autenticada.
+RF-10 · Autorregistro y verificación. El usuario general se autorregistrará con correo institucional autorizado y contraseña propia; deberá verificar el correo. No se utilizará inicio de sesión único institucional (SSO).
+RF-25 · Restricción de dominios institucionales. El registro solo aceptará correos de dominios institucionales autorizados. La lista exacta queda fijada en RF-79.
+RF-28 · Recuperación de contraseña. El usuario podrá solicitar recuperación mediante enlace temporal dirigido al correo institucional verificado; la vigencia se configurará según RF-72.
+RF-63 · Cierre de sesión. Al cerrar sesión se invalidará la sesión vigente, se redirigirá al inicio de sesión con confirmación y se impedirá acceder a páginas protegidas sin autenticación nueva.
+RF-64 · Expiración por inactividad. Las sesiones de todos los roles expirarán tras 30 minutos de inactividad y se seguirá la navegación definida para sesiones vencidas.
+RF-65 · Limitación de intentos de acceso. Se aplicará el control de intentos fallidos de Laravel, con bloqueo temporal y mensaje informativo. El umbral y la duración del bloqueo se definirán en la configuración de autenticación.
+RF-66 · Correo institucional duplicado. El registro con correo institucional ya existente será rechazado con mensaje explícito y opciones para iniciar sesión o recuperar contraseña.
+RF-67 · Acceso de cuenta desactivada. Las cuentas desactivadas no podrán iniciar sesión; se mostrará mensaje de desactivación y únicamente el administrador podrá reactivarlas.
+RF-68 · Correo sin verificar. Una cuenta con correo no verificado no accederá a secciones protegidas; el sistema explicará la situación y permitirá solicitar reenvío de verificación.
+RF-69 · Enlace de verificación inválido. El sistema rechazará enlaces de verificación inválidos o vencidos, lo informará y permitirá solicitar otro; el correo seguirá sin verificar.
+RF-70 · Vigencia de verificación configurable. La duración de los enlaces de verificación de correo se establecerá mediante la configuración de Laravel.
+RF-71 · Enlace de recuperación inválido. Los enlaces inválidos o vencidos para recuperar contraseña se rechazarán con mensaje específico y opción de pedir otro, sin modificar la contraseña vigente.
+RF-72 · Vigencia de recuperación configurable. La duración de los enlaces de recuperación de contraseña se establecerá mediante la configuración de Laravel.
+RF-73 · Política de contraseñas. Al registrar o restablecer una contraseña se exigirán mínimo ocho caracteres, al menos una mayúscula, una minúscula, un número y un símbolo especial.
+RF-74 · Confirmación y visibilidad de contraseña. Registro y restablecimiento pedirán contraseña y confirmación idénticas, mostrarán error específico si difieren y permitirán mostrar/ocultar la contraseña en el formulario.
+RF-75 · Almacenamiento seguro de contraseñas. Las contraseñas se almacenarán mediante el mecanismo de hash seguro de Laravel. No se almacenarán en texto plano ni podrán recuperarse en su forma original. No se implementará historial de contraseñas ni cierre forzado de otras sesiones.
+RF-76 · Finalización de recuperación. Tras restablecer correctamente la contraseña se actualizará su hash, invalidará el enlace utilizado y redirigirá al inicio de sesión con mensaje de éxito; no habrá inicio automático de sesión.
+RF-77 · Respuesta genérica en recuperación. Al solicitar recuperación, el sistema mostrará el mismo mensaje genérico tanto para correos existentes como desconocidos; enviará enlace solamente cuando corresponda, evitando enumeración de cuentas.
+RF-78 · Rechazo de dominio no autorizado. El registro rechazará correos fuera de dominios autorizados con mensaje específico y conservará los demás datos no sensibles del formulario para su corrección.
+RF-79 · Lista configurable de dominios. Se permitirán exactamente los dominios merida.tecnm.mx e itmerida.edu.mx. El equipo configurará la lista en Laravel; no existirá pantalla administrativa para dominios. Se validará el dominio completo del correo.
+RF-80 · Datos solicitados al registrarse. El usuario general registrará solo nombre completo, correo institucional, contraseña y confirmación. No se solicitarán matrícula, número de control, teléfono u otros datos personales.
+RF-81 · Longitud del nombre completo. El nombre completo será obligatorio y tendrá como máximo 100 caracteres.
+RF-82 · Caracteres del nombre completo. Se aceptarán letras, espacios, acentos, ñ, guiones y apóstrofos; se rechazarán números y otros símbolos especiales.
+RF-83 · Edición de nombre desde perfil. El usuario general podrá modificar exclusivamente su nombre completo desde el perfil, cumpliendo RF-81 y RF-82. El correo institucional será ineditable; no podrá editar publicaciones originales.
+RF-84 · Cambio de contraseña en perfil. El usuario autenticado podrá cambiar contraseña proporcionando contraseña actual, nueva y confirmación. Se verificará la contraseña actual y cumplirán RF-73, RF-74 y RF-75.
+RF-85 · Sesión después del cambio de contraseña. Tras cambio correcto desde perfil, se mostrará confirmación y seguirá activa la sesión actual; no se cerrarán automáticamente otras sesiones. No altera el flujo de recuperación de RF-76.
+4.2 Roles y acceso
+RF-11 · Roles y responsabilidades. Existirán tres roles: usuario general (publica Perdido/Encontrado, sin editar las publicaciones originales), prefectura (recepción física, aprobaciones, devoluciones y cierres) y administrador (gestión de cuentas).
+RF-26 · Provisión de cuentas privilegiadas. Las cuentas de prefectura y administrador serán preconfiguradas por el equipo de desarrollo. El autorregistro crea exclusivamente usuarios generales; no habrá interfaz para asignar o cambiar roles.
+RF-43 · Privacidad del autor en el muro. Los demás usuarios generales no podrán ver en el detalle nombre, correo ni datos de contacto del autor de otra publicación.
+RF-44 · Visibilidad de identidad por rol. Prefectura podrá ver nombre y correo del autor de reportes que gestiona; el administrador podrá consultarlos en gestión de cuentas; los usuarios generales no verán esa información de otros autores.
+RF-45 · Historial según rol. El usuario verá sus reportes cerrados y rechazados en Mis publicaciones; prefectura accederá al historial de reportes bajo su gestión; administración no tendrá historial privilegiado de publicaciones; no habrá historial público de reportes cerrados.
+RF-61 · Ruta protegida sin sesión. El intento de acceder a una ruta protegida sin sesión válida o tras expirar redirigirá al inicio de sesión con mensaje claro; tras autenticarse, se navegará según rol, sin exigir recuperar la URL original.
+RF-62 · Acceso no autorizado entre roles. Una cuenta autenticada que intente abrir una ruta de otro rol recibirá respuesta 404 Not Found, sin revelar la existencia del recurso, con autorización impuesta desde el servidor.
+4.3 Publicaciones y consulta
+RF-12 · Muro cronológico único. Las publicaciones Perdido y Encontrado compartirán un mismo muro cronológico y mostrarán claramente su tipo.
+RF-13 · Información de una publicación. Cada publicación contendrá nombre del objeto, descripción, categoría, imagen según su tipo, área, fecha aproximada del suceso según su tipo, fecha/hora de publicación automática y referencia interna al autor.
+RF-18 · Obligatoriedad de campos por tipo. Ambos tipos requieren nombre, descripción, categoría y área. Imagen y fecha del suceso son obligatorias para Encontrado y opcionales para Perdido. Autor y fecha/hora de publicación se registran automáticamente.
+RF-20 · Publicación inmediata de Perdido. Un reporte Perdido válido se publicará inmediatamente, sin aprobación previa de prefectura.
+RF-23 · Búsqueda y filtros del muro. El muro tendrá búsqueda por palabras clave y filtro por Todos, Perdido o Encontrado; no se añadirán filtros avanzados por fecha, edificio o categoría.
+RF-24 · Mis publicaciones y estados. El usuario consultará sus publicaciones, estados y motivos de rechazo desde Mis publicaciones. No habrá notificaciones automáticas internas ni por correo acerca de cambios de estado.
+RF-30 · Categorías predefinidas. La categoría del objeto se seleccionará de un catálogo obligatorio predefinido, incluyendo la opción Otros. El catálogo completo queda pendiente de concretar.
+RF-31 · Especificación para categoría Otros. Al seleccionar la categoría Otros, el usuario deberá describir adicionalmente el tipo de objeto. La longitud máxima de este texto está pendiente.
+RF-32 · Catálogo de áreas. El área o edificio del campus se seleccionará de un catálogo obligatorio predefinido, sin entrada libre. El catálogo completo queda pendiente.
+RF-33 · Opción Otra área del campus. El catálogo incluirá «Otra área del campus» sin solicitar texto adicional.
+RF-34 · Fecha del suceso sin hora. La fecha del suceso será de tipo fecha, sin solicitar hora. Será obligatoria para Encontrado y opcional para Perdido.
+RF-35 · Campo de clase académica. Los formularios incluirán un campo de clase académica de texto libre; su obligatoriedad se establece en RF-36.
+RF-36 · Clase académica opcional. El campo de clase académica será opcional tanto para Perdido como para Encontrado.
+RF-38 · Longitud de campos del reporte. Nombre del objeto: máximo 100 caracteres. Descripción: máximo 500 caracteres. Ambos campos se validarán conforme a su obligatoriedad.
+RF-39 · Campos incluidos en búsqueda. La búsqueda del muro abarcará solamente el nombre y la descripción del objeto; no buscará por categoría, área, clase o especificación de Otros.
+RF-40 · Orden cronológico del muro. Se podrá ordenar por Más recientes o Más antiguas, con Más recientes de manera predeterminada, según fecha/hora de publicación. El orden elegido se conservará al buscar y filtrar.
+RF-41 · Paginación del muro. Se utilizará paginación tradicional de 10 publicaciones por página, con navegación Anterior/Siguiente, conservando búsquedas, filtros y orden.
+RF-42 · Tarjetas y detalle. Las tarjetas del muro mostrarán imagen si existe, nombre, tipo, descripción abreviada, categoría, área y fecha de publicación. El detalle completo se abrirá por separado.
+4.4 Gestión de prefectura
+RF-14 · Devolución de objeto encontrado. Solamente prefectura podrá marcar un reporte Encontrado como Devuelto; dejará de figurar entre las publicaciones activas y permanecerá en el historial autorizado.
+RF-15 · Contacto a través de prefectura. La recuperación de objetos será atendida presencialmente por prefectura. No habrá mensajería directa, datos de contacto entre usuarios ni comunicación entre autor y posible propietario dentro del sistema.
+RF-16 · Verificación presencial de propiedad. Prefectura verificará presencialmente la propiedad mediante preguntas o características del objeto; el sistema no registrará identidad del reclamante ni comprobante digital adicional de entrega.
+RF-17 · Solicitud de cierre de Perdido. El autor de Perdido podrá solicitar cierre mediante «Ya encontré mi objeto»; prefectura deberá aprobarlo para cerrar el reporte, que quedará en historial.
+RF-19 · Aprobación previa de Encontrado. Un Encontrado creado por usuario general quedará Pendiente e invisible en el muro hasta que prefectura reciba físicamente el objeto y apruebe el reporte.
+RF-21 · Rechazo de Encontrado. Prefectura podrá rechazar un Encontrado pendiente únicamente con motivo obligatorio. El autor verá el motivo en Mis publicaciones y podrá crear un reporte nuevo corregido; no editará el original rechazado, que quedará almacenado e invisible.
+RF-22 · Publicación directa por prefectura. Prefectura podrá crear y publicar directamente un Encontrado cuando el objeto ya esté bajo su custodia, sin proceso de aprobación adicional.
+RF-37 · Pendientes tras desactivación. La desactivación de la cuenta autora no rechazará automáticamente sus Encontrado pendientes: prefectura podrá revisarlos y aprobarlos tras recibir físicamente los objetos.
+RF-46 · Independencia entre Perdido y Encontrado. Prefectura identificará manualmente posibles coincidencias. No habrá detección automática de coincidencias ni vínculo digital entre reportes.
+RF-47 · Cierre independiente de reportes. Un Encontrado se cierra al marcarse Devuelto por prefectura; un Perdido se cierra tras solicitud del autor y aprobación de prefectura. No se cerrarán de forma simultánea ni automática.
+RF-48 · Rechazo de solicitud de cierre. Prefectura podrá rechazar la solicitud de cierre de un Perdido con motivo obligatorio. El reporte permanecerá activo y el autor podrá consultar el motivo y volver a solicitar cierre.
+RF-49 · Visibilidad de Perdido con cierre pendiente. Mientras el cierre de Perdido esté pendiente, la publicación seguirá visible y activa. En Mis publicaciones aparecerá «Cierre pendiente de revisión» y no se podrán duplicar solicitudes hasta resolver la actual.
+RF-50 · Secciones del panel de prefectura. El panel de prefectura contará con tres apartados: Encontrados pendientes de aprobación, solicitudes de cierre pendientes y publicaciones bajo gestión.
+RF-51 · Filtros y búsqueda de prefectura. En Publicaciones bajo gestión habrá filtros por tipo Perdido/Encontrado y estado, y búsqueda únicamente por nombre del objeto.
+RF-52 · Información en listas de pendientes. Las listas de aprobación y cierre pendientes mostrarán nombre del objeto, tipo de solicitud, nombre del autor, fecha de publicación y estado; se accederá al detalle al abrir cada elemento.
+RF-53 · Confirmación de recepción física. Antes de aprobar un Encontrado publicado por un usuario, prefectura deberá marcar una casilla obligatoria que confirme la recepción física del objeto. No se generará acta o registro independiente de recepción.
+RF-54 · Confirmación de devolución física. Antes de marcar Encontrado como Devuelto, prefectura deberá marcar una casilla obligatoria que confirme entrega presencial y verificación de propiedad, sin recopilar identidad del reclamante ni acta digital adicional.
+RF-55 · Reversión de Devuelto. Prefectura podrá revertir por error un Encontrado marcado Devuelto a estado activo, con motivo obligatorio. La publicación reaparecerá en el muro y no cambiará el estado de reportes Perdido.
+RF-56 · Historial de acciones de prefectura. Se registrará historial básico de acciones de prefectura: acción, fecha/hora, cuenta responsable y motivo cuando corresponda (aprobaciones/rechazos, devolución, reversión y decisiones de cierre). Visible a prefectura para reportes bajo su gestión.
+4.5 Administración de cuentas
+RF-27 · Administración de cuentas. El administrador dispondrá de listado y búsqueda de cuentas, y podrá activarlas o desactivarlas; no podrá cambiar roles ni eliminarlas permanentemente desde el sistema.
+RF-29 · Publicaciones de cuentas desactivadas. Desactivar una cuenta impedirá su inicio de sesión, pero no retirará automáticamente publicaciones previamente aprobadas y activas; prefectura seguirá gestionando cierres y devoluciones.
+RF-86 · Restricción de desactivación voluntaria. Solo los administradores podrán activar o desactivar cuentas; un usuario general no tendrá autodesactivación ni solicitud de desactivación desde su perfil.
+RF-87 · Desactivación justificada. Antes de desactivar una cuenta, el administrador deberá confirmar la operación e introducir un motivo obligatorio, que se almacenará; cancelar no alterará el estado.
+RF-88 · Reactivación justificada. Antes de reactivar una cuenta, el administrador deberá confirmar la operación e introducir motivo obligatorio, que se almacenará. Se restaurará el acceso con las credenciales existentes, sujeto a la verificación de correo y autenticación.
+RF-89 · Historial de movimientos de cuenta. El sistema guardará todas las activaciones y desactivaciones con tipo de acción, fecha/hora, administrador responsable y motivo; únicamente administradores podrán consultarlas.
+RF-90 · Historial en detalle de cuenta. El historial administrativo se consultará dentro del detalle de cada cuenta; no existirá sección global de auditoría.
+RF-91 · Longitud del motivo administrativo. Los motivos obligatorios de activación y desactivación tendrán máximo 255 caracteres. No se aceptarán motivos vacíos.
+4.6 Interfaz y navegación
+RF-57 · Validación de formularios. Las validaciones se realizarán al enviar el formulario. Se mostrarán mensajes específicos por campo, se conservarán los datos pertinentes para corregir errores y se bloquearán los envíos inválidos.
+RF-58 · Protección contra doble envío. Durante el procesamiento se deshabilitará temporalmente el botón de envío para prevenir duplicaciones por doble clic; no se detectarán publicaciones similares.
+RF-59 · Confirmación tras publicar. Tras enviar con éxito, se informará según tipo y se redirigirá a Mis publicaciones. Perdido: «Tu publicación se ha publicado correctamente». Encontrado por usuario: «Tu reporte fue registrado y está pendiente de entrega y aprobación por prefectura».
+RF-60 · Advertencia al abandonar formulario. Al intentar abandonar un formulario de publicación con cambios no guardados, se avisará y permitirá seguir editando o salir descartando. No habrá guardado automático ni borradores.
+RF-92 · Mensajes de errores internos. Ante un error interno inesperado, el sistema mostrará un mensaje comprensible para el usuario, sin exponer información técnica sensible.
+5. Requisitos no funcionales (RNF)
+RNF-01 · Interfaz adaptable. Se entregará una sola aplicación web adaptable a computadora, tableta y teléfono; no se contempla aplicación móvil nativa.
+RNF-02 · Archivo de imagen. Se admitirá una imagen por publicación como máximo, en JPG/JPEG, PNG o WEBP, de hasta 5 MB; se almacenará localmente.
+Los indicadores de rendimiento y disponibilidad se establecerán cuando se disponga de los parámetros correspondientes para el entorno de operación.
+6. Restricciones y requisitos técnicos (RT)
+RT-01 · Tecnologías de implementación. El prototipo utilizará Laravel, MySQL, Blade y Bootstrap. Las versiones definitivas de componentes se establecerán durante la configuración técnica.
+RT-02 · Ejecución local. El prototipo se ejecutará y demostrará localmente en un equipo del proyecto; no se exige hospedaje público ni infraestructura de producción.
+RT-03 · Simulación local de correo. La verificación de cuentas y la recuperación de contraseñas utilizarán una herramienta local para capturar los mensajes generados. Durante la demostración no se enviarán correos a buzones institucionales reales.
+RT-04 · Respaldo SQL manual. El equipo conservará un archivo SQL con la estructura y los datos necesarios para el desarrollo y la demostración del prototipo. La generación y recuperación de respaldos se realizarán manualmente fuera de la aplicación.
+RT-05 · Pruebas funcionales manuales. El equipo realizará pruebas funcionales manuales basadas en los requisitos, que contemplen los flujos por rol, las validaciones, los permisos y los estados del sistema. Se documentarán los resultados y los defectos detectados.
+7. Reglas de seguridad, privacidad y acceso
+Los dominios autorizados son merida.tecnm.mx e itmerida.edu.mx (RF-25, RF-78, RF-79); no se admite un dominio parecido o subdominio diferente por coincidencia parcial.
+La contraseña en el registro, recuperación y cambio se valida con la política de RF-73 y se almacena como hash seguro (RF-75).
+Las contraseñas y datos personales no deben exponerse en mensajes de error; el restablecimiento no informa si existe el correo (RF-77).
+Una sesión expira tras 30 minutos de inactividad (RF-64); las rutas sin sesión redirigen al inicio de sesión y el acceso autenticado a recursos de otro rol devuelve 404 (RF-61, RF-62).
+La identidad del autor no se mostrará a otros usuarios generales; prefectura la verá solo en reportes bajo gestión y administración en gestión de cuentas (RF-43, RF-44).
+Las cuentas privilegiadas serán preconfiguradas; ninguna persona podrá promoverse desde el registro público (RF-26).
+8. Verificación y criterios generales de aceptación
+La verificación se realizará mediante pruebas funcionales manuales de los flujos definidos para cada rol. Cada caso de prueba incluirá el requisito relacionado, las condiciones iniciales, el procedimiento, el resultado esperado, el resultado obtenido y, cuando corresponda, los defectos detectados.
+Grupo de casos
+Comprobaciones esenciales
+RF relacionados
+Registro e ingreso
+Dos dominios válidos, rechazo de otros, duplicados, verificación, credenciales y caducidad de sesión.
+RF-10, RF-25, RF-61 a RF-79
+Publicaciones
+Campos obligatorios por tipo, una imagen, validaciones, Perdido inmediato y Encontrado pendiente.
+RF-12, RF-18 a RF-21, RF-30 a RF-42, RF-57 a RF-60
+Muro y privacidad
+Búsqueda solo nombre/descripción, filtros, 10 por página, ocultamiento de identidad.
+RF-23, RF-39 a RF-44
+Prefectura
+Recepción y verificación presenciales, aprobación/rechazo, devolución, reversión, solicitudes de cierre.
+RF-14 a RF-17, RF-46 a RF-56
+Administración
+Activación/desactivación con motivos, historial por cuenta, cuentas desactivadas.
+RF-27, RF-29, RF-67, RF-86 a RF-91
+Errores y permisos
+Mensajes comprensibles, bloqueo de rutas indebidas e invalidación de sesión.
+RF-61 a RF-65, RF-92
+La evaluación consistirá en comparar los resultados obtenidos con los criterios de aceptación definidos en los requisitos. Los defectos identificados se documentarán para su revisión y corrección.
+9. Aspectos pendientes de definición
+Los siguientes aspectos deberán precisarse durante el diseño técnico y la configuración del prototipo:
+Asunto pendiente
+Origen
+Tratamiento
+Catálogo definitivo de categorías, además de Otros
+RF-30
+Definir en la configuración/datos iniciales del prototipo.
+Catálogo definitivo de áreas o edificios del campus, además de Otra área del campus
+RF-32 y RF-33
+Definir antes de configurar formularios y datos de prueba.
+Longitud máxima del texto adicional de categoría Otros
+RF-31
+Establecer la longitud y aplicar la validación correspondiente durante el diseño técnico.
+Longitudes mínimas de nombre y descripción del objeto
+RF-38
+Definir el comportamiento del campo y la extensión del resumen durante el diseño de interfaz.
+Límite de texto para clase académica y longitud del resumen de tarjeta
+RF-35, RF-42
+Se mantiene libre/abreviado sin cifra seleccionada.
+Versiones concretas de Laravel, PHP, MySQL, Blade/Bootstrap y configuración de entorno
+RT-01
+Documentar durante la preparación técnica.
+Duración de enlaces de verificación y recuperación
+RF-70, RF-72
+Configurar los valores de duración mediante Laravel.
+Umbral de intentos fallidos y tiempo de bloqueo
+RF-65
+Definir el umbral y la duración del bloqueo en la configuración de Laravel.
+Herramienta específica para capturar correos locales
+RT-03
+Seleccionar durante preparación del entorno.
+Métricas numéricas de rendimiento y disponibilidad
+Por especificar
+Establecer los indicadores y valores de referencia para el entorno de operación.
