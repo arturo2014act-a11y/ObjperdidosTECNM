@@ -72,7 +72,7 @@
                     <div class="col-12">
                         <div class="alert alert-danger mb-0 small">
                             <i class="bi bi-exclamation-octagon-fill me-2"></i>
-                            <strong>Motivo registrado de desactivación (RF-87):</strong> {{ $user->deactivation_reason }}
+                            <strong>Motivo registrado de desactivación:</strong> {{ $user->deactivation_reason }}
                         </div>
                     </div>
                 @endif
@@ -84,10 +84,10 @@
             <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
                 <div>
                     <h5 class="fw-bold text-tecnm mb-0">
-                        <i class="bi bi-clock-history me-2 text-primary"></i>Historial de Movimientos de la Cuenta (RF-89, RF-90)
+                        <i class="bi bi-clock-history me-2 text-primary"></i>Historial de Movimientos de la Cuenta
                     </h5>
                     <small class="text-muted">
-                        Trazabilidad administrativa interna: solo visible en el detalle de la cuenta; no existe auditoría global (RF-90).
+                        Trazabilidad administrativa interna: solo visible en el detalle de la cuenta; no existe auditoría global.
                     </small>
                 </div>
                 <span class="badge bg-secondary">{{ $user->userLogs->count() }} movimientos</span>
@@ -104,9 +104,9 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Fecha / Hora</th>
-                                <th>Tipo de Acción (RF-89)</th>
+                                <th>Tipo de Acción</th>
                                 <th>Administrador Responsable</th>
-                                <th>Motivo Justificado (RF-91)</th>
+                                <th>Motivo Justificado</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -142,7 +142,7 @@
         <div class="card card-custom bg-white border-0 shadow-sm p-4">
             <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
                 <h5 class="fw-bold text-tecnm mb-0">
-                    <i class="bi bi-box2 me-2 text-warning"></i>Publicaciones de esta Cuenta (RF-29)
+                    <i class="bi bi-box2 me-2 text-warning"></i>Publicaciones de esta Cuenta
                 </h5>
                 <small class="text-muted">Las publicaciones permanecen vigentes aunque la cuenta esté desactivada</small>
             </div>
@@ -202,7 +202,7 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="small text-muted mb-2">Ingresa el motivo justificado de desactivación (RF-87, RF-91):</p>
+                    <p class="small text-muted mb-2">Ingresa el motivo justificado de desactivación:</p>
                     <textarea name="reason" rows="3" class="form-control" placeholder="Motivo obligatorio..." maxlength="255" minlength="5" required></textarea>
                     <div class="form-text small">Máximo 255 caracteres.</div>
                 </div>
@@ -226,7 +226,7 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="small text-muted mb-2">Ingresa el motivo justificado de reactivación (RF-88, RF-91):</p>
+                    <p class="small text-muted mb-2">Ingresa el motivo justificado de reactivación:</p>
                     <textarea name="reason" rows="3" class="form-control" placeholder="Motivo obligatorio..." maxlength="255" minlength="5" required></textarea>
                     <div class="form-text small">Máximo 255 caracteres.</div>
                 </div>

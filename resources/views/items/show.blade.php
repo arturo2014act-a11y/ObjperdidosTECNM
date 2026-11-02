@@ -130,10 +130,10 @@
                         <div class="alert alert-light border-warning small mb-3">
                             <div class="d-flex align-items-center gap-2 mb-1">
                                 <i class="bi bi-shield-shaded text-warning fs-5"></i>
-                                <strong class="text-dark">Protocolo de Recuperación en Prefectura (RF-15, RF-16)</strong>
+                                <strong class="text-dark">Protocolo de Recuperación en Prefectura</strong>
                             </div>
                             <p class="mb-0 text-muted">
-                                Por políticas de privacidad y seguridad de la institución (RF-43), la identidad de los autores no es pública. Para reclamar o entregar este bien, acude presencialmente al <strong>Módulo de Prefectura del Campus Poniente</strong> con tu credencial escolar y detalles que acrediten tu propiedad.
+                                Por políticas de privacidad y seguridad de la institución, la identidad de los autores no es pública. Para reclamar o entregar este bien, acude presencialmente al <strong>Módulo de Prefectura del Campus Poniente</strong> con tu credencial escolar y detalles que acrediten tu propiedad.
                             </p>
                         </div>
                     @endif

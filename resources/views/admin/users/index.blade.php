@@ -10,7 +10,7 @@
                 <i class="bi bi-people-fill me-2 text-info"></i>Gestión de Cuentas Institucionales
             </h1>
             <p class="text-muted mb-0 small">
-                Consulta de usuarios, control de acceso y activación/desactivación justificada con auditoría (RF-27, RF-86 a RF-91).
+                Consulta de usuarios, control de acceso y activación/desactivación justificada con auditoría.
             </p>
         </div>
         <span class="badge bg-danger px-3 py-2">
@@ -169,7 +169,7 @@
                                             </div>
                                             <div class="modal-body text-start">
                                                 <p class="small text-muted mb-2">
-                                                    (RF-67, RF-87) La cuenta no podrá iniciar sesión en la plataforma. Sus publicaciones activas permanecerán vigentes (RF-29).
+ La cuenta no podrá iniciar sesión en la plataforma. Sus publicaciones activas permanecerán vigentes.
                                                 </p>
                                                 <div class="mb-3">
                                                     <label for="reason_deact_{{ $user->id }}" class="form-label small fw-bold">
@@ -184,7 +184,7 @@
                                                         maxlength="255" 
                                                         minlength="5" 
                                                         required></textarea>
-                                                    <div class="form-text small">Máximo 255 caracteres (RF-91). No se aceptan motivos vacíos.</div>
+                                                    <div class="form-text small">Máximo 255 caracteres. No se aceptan motivos vacíos.</div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -212,7 +212,7 @@
                                             </div>
                                             <div class="modal-body text-start">
                                                 <p class="small text-muted mb-2">
-                                                    (RF-88) Se restaurará el acceso de la cuenta al sistema con sus credenciales institucionales existentes.
+ Se restaurará el acceso de la cuenta al sistema con sus credenciales institucionales existentes.
                                                 </p>
                                                 <div class="mb-3">
                                                     <label for="reason_react_{{ $user->id }}" class="form-label small fw-bold">
@@ -227,7 +227,7 @@
                                                         maxlength="255" 
                                                         minlength="5" 
                                                         required></textarea>
-                                                    <div class="form-text small">Máximo 255 caracteres (RF-91).</div>
+                                                    <div class="form-text small">Máximo 255 caracteres.</div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">

@@ -34,8 +34,8 @@
                             <label class="btn btn-outline-danger w-100 py-3 text-start d-flex align-items-center gap-3 rounded-3" for="type_perdido">
                                 <i class="bi bi-search fs-3"></i>
                                 <div>
-                                    <div class="fw-bold">Objeto Perdido</div>
-                                    <small class="text-muted d-block" style="font-size: 0.75rem;">Se publicará de forma inmediata en el muro institucional (RF-20).</small>
+                                    <div class="fw-bold">Perdí un objeto</div>
+                                    <small class="text-muted d-block" style="font-size: 0.75rem;">Se publicará de forma inmediata en el muro institucional.</small>
                                 </div>
                             </label>
                         </div>
@@ -44,8 +44,8 @@
                             <label class="btn btn-outline-success w-100 py-3 text-start d-flex align-items-center gap-3 rounded-3" for="type_encontrado">
                                 <i class="bi bi-box-seam fs-3"></i>
                                 <div>
-                                    <div class="fw-bold">Objeto Encontrado</div>
-                                    <small class="text-muted d-block" style="font-size: 0.75rem;">Requiere entrega física y aprobación de Prefectura (RF-19).</small>
+                                    <div class="fw-bold">Encontré un objeto</div>
+                                    <small class="text-muted d-block" style="font-size: 0.75rem;">Requiere entrega física y aprobación de Prefectura.</small>
                                 </div>
                             </label>
                         </div>
@@ -55,7 +55,7 @@
                 {{-- Aviso contextual según el tipo seleccionado --}}
                 <div id="foundNotice" class="alert alert-warning small d-none mb-4 shadow-sm" role="alert">
                     <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
-                    <strong>Protocolo para Objetos Encontrados (RF-19, RF-53):</strong>
+                    <strong>Protocolo para Objetos Encontrados:</strong>
                     Tu reporte quedará <em>Pendiente e invisible en el muro</em> hasta que entregues físicamente el objeto en la oficina de Prefectura del Campus Poniente para constatar su custodia.
                 </div>
 
@@ -74,7 +74,7 @@
                         maxlength="100" 
                         required>
                     <div class="d-flex justify-content-between form-text small">
-                        <span>Máximo 100 caracteres (RF-38).</span>
+                        <span>Máximo 100 caracteres.</span>
                         <span id="nameCount" class="text-muted">0/100</span>
                     </div>
                     @error('name')
@@ -96,7 +96,7 @@
                         maxlength="500" 
                         required>{{ old('description') }}</textarea>
                     <div class="d-flex justify-content-between form-text small">
-                        <span>Máximo 500 caracteres (RF-38).</span>
+                        <span>Máximo 500 caracteres.</span>
                         <span id="descCount" class="text-muted">0/500</span>
                     </div>
                     @error('description')
@@ -130,7 +130,7 @@
                             name="category_specification" 
                             id="category_specification" 
                             class="form-control @error('category_specification') is-invalid @enderror" 
-                            placeholder="Describe el tipo de objeto (RF-31)..." 
+                            placeholder="Describe el tipo de objeto..." 
                             value="{{ old('category_specification') }}" 
                             maxlength="100">
                         @error('category_specification')
@@ -139,39 +139,45 @@
                     </div>
                 </div>
 
-                {{-- Área y Clase Académica (RF-32, RF-33, RF-35, RF-36) --}}
+                {{-- Área y Espacio Específico Dependiente (RF-32, RF-33, RF-35, RF-36) --}}
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label for="area" class="form-label small fw-bold">
-                            Ubicación / Área del Campus <span class="text-danger">*</span>
+                            Edificio o Área General (Campus Poniente) <span class="text-danger">*</span>
                         </label>
-                        <select name="area" id="area" class="form-select @error('area') is-invalid @enderror" required>
-                            <option value="">-- Selecciona el área o edificio --</option>
+                        <select name="area" id="area" class="form-select @error('area') is-invalid @enderror" required onchange="handleAreaChange()">
+                            <option value="">-- Selecciona el edificio o área --</option>
                             @foreach ($areas as $area)
                                 <option value="{{ $area }}" {{ old('area') === $area ? 'selected' : '' }}>{{ $area }}</option>
                             @endforeach
                         </select>
+                        <div class="form-text small">Catálogo obligatorio sin entrada libre.</div>
                         @error('area')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <div class="col-md-6">
-                        <label for="academic_class" class="form-label small fw-bold">
-                            Aula, Laboratorio o Clase (Opcional)
+                    {{-- Segundo catálogo dependiente y opcional de espacios (RF-32) --}}
+                    <div class="col-md-6" id="spaceCatalogWrapper">
+                        <label for="academic_class" class="form-label small fw-bold" id="spaceLabel">
+                            Espacio Específico (Aula / Lab) (Opcional)
                         </label>
+                        
+                        {{-- Selector dependiente para edificios con espacios registrados (H y G) --}}
+                        <select name="academic_class_select" id="academic_class_select" class="form-select mb-2" onchange="syncSpecificSpace()">
+                            <option value="">-- Sin especificar --</option>
+                        </select>
+
+                        {{-- Input real enviado en el formulario --}}
                         <input 
-                            type="text" 
+                            type="hidden" 
                             name="academic_class" 
                             id="academic_class" 
-                            class="form-control @error('academic_class') is-invalid @enderror" 
-                            placeholder="Ej: Aula C4, Lab. Redes, Clase de Cálculo..." 
-                            value="{{ old('academic_class') }}" 
-                            maxlength="100">
-                        <div class="form-text small">Texto libre opcional (RF-35, RF-36).</div>
-                        @error('academic_class')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                            value="{{ old('academic_class') }}">
+
+                        <div id="spaceHelpText" class="form-text small text-muted">
+                            Selecciona el aula o laboratorio si aplica.
+                        </div>
                     </div>
                 </div>
 
@@ -189,7 +195,7 @@
                             value="{{ old('event_date', date('Y-m-d')) }}" 
                             max="{{ date('Y-m-d') }}">
                         <div class="form-text small" id="eventDateHelp">
-                            Obligatoria para Encontrados, opcional para Perdidos (RF-18, RF-34).
+                            Obligatoria para Encontrados, opcional para Perdidos.
                         </div>
                         @error('event_date')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -207,7 +213,7 @@
                             class="form-control @error('image') is-invalid @enderror" 
                             accept=".jpg,.jpeg,.png,.webp">
                         <div class="form-text small" id="imageHelp">
-                            JPG, PNG o WEBP. Máx 5 MB (RNF-02).
+                            JPG, PNG o WEBP. Máx 5 MB.
                         </div>
                         @error('image')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -231,7 +237,7 @@
 <script>
     let formIsDirty = false;
 
-    // Detectar cambios en formulario para advertencia de abandono (RF-60)
+    // Detectar cambios en formulario para advertencia de abandono
     const reportForm = document.getElementById('reportItemForm');
     reportForm.querySelectorAll('input, textarea, select').forEach(element => {
         element.addEventListener('change', () => { formIsDirty = true; });
@@ -241,7 +247,7 @@
     window.addEventListener('beforeunload', function (e) {
         if (formIsDirty) {
             e.preventDefault();
-            e.returnValue = 'Tienes cambios no guardados en el reporte (RF-60). ¿Seguro que deseas salir?';
+            e.returnValue = 'Tienes cambios no guardados en el reporte. ¿Seguro que deseas salir?';
         }
     });
 
@@ -258,7 +264,66 @@
         descCount.textContent = `${descInput.value.length}/500`;
     });
 
-    // Alternar especificación de otros (RF-31)
+    // Catálogo dependiente de espacios específicos
+    const spacesCatalog = @json($spaces ?? []);
+    const selectedAcademicClass = @json(old('academic_class', ''));
+
+    function handleAreaChange() {
+        const areaSelect = document.getElementById('area');
+        const area = areaSelect.value;
+        const select = document.getElementById('academic_class_select');
+        const hiddenInput = document.getElementById('academic_class');
+        const helpText = document.getElementById('spaceHelpText');
+
+        select.innerHTML = '<option value="">-- Sin especificar --</option>';
+
+        if (spacesCatalog[area] && spacesCatalog[area].length > 0) {
+            select.disabled = false;
+            select.classList.remove('bg-light');
+            spacesCatalog[area].forEach(space => {
+                const opt = document.createElement('option');
+                opt.value = space;
+                opt.textContent = `${area} - ${space}`;
+                if (space === selectedAcademicClass || hiddenInput.value === space) {
+                    opt.selected = true;
+                }
+                select.appendChild(opt);
+            });
+            helpText.textContent = `Espacios identificados para ${area} (opcional).`;
+        } else if (area === 'Edificio B' || area === 'Edificio C') {
+            select.disabled = true;
+            select.classList.add('bg-light');
+            select.innerHTML = '<option value="">-- Espacios pendientes de levantar --</option>';
+            helpText.textContent = `Aulas y laboratorios de ${area} pendientes de levantar. Se registra con espacio sin especificar.`;
+            hiddenInput.value = '';
+        } else if (area === 'Otra área del campus') {
+            select.disabled = true;
+            select.classList.add('bg-light');
+            select.innerHTML = '<option value="">-- No requiere espacio específico --</option>';
+            helpText.textContent = 'No se solicita texto adicional ni espacio específico.';
+            hiddenInput.value = '';
+        } else {
+            select.disabled = true;
+            select.classList.add('bg-light');
+            select.innerHTML = '<option value="">-- Sin especificar --</option>';
+            helpText.textContent = 'Espacio específico sin registrar. Se guarda como sin especificar.';
+            hiddenInput.value = '';
+        }
+        syncSpecificSpace();
+    }
+
+    function syncSpecificSpace() {
+        const select = document.getElementById('academic_class_select');
+        const hiddenInput = document.getElementById('academic_class');
+        if (!select.disabled) {
+            hiddenInput.value = select.value;
+        }
+    }
+
+    // Inicializar catálogo dependiente al cargar
+    handleAreaChange();
+
+    // Alternar especificación de otros
     function toggleCategorySpec() {
         const cat = document.getElementById('category').value;
         const spec = document.getElementById('specContainer');
@@ -272,7 +337,7 @@
         }
     }
 
-    // Reglas dinámicas por Tipo (RF-18)
+    // Reglas dinámicas por Tipo
     function toggleTypeRules() {
         const isFound = document.getElementById('type_encontrado').checked;
         const notice = document.getElementById('foundNotice');
@@ -299,7 +364,7 @@
     // Inicializar reglas según selección inicial
     toggleTypeRules();
 
-    // Protección de doble envío (RF-58)
+    // Protección de doble envío
     reportForm.addEventListener('submit', function () {
         formIsDirty = false; // Evita el aviso de beforeunload al enviar
         const btn = document.getElementById('btnSubmitReport');

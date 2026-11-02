@@ -15,6 +15,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // 0. Cuenta de Administrador General (RF-27)
+        $admin = User::create([
+            'name' => 'Administrador General TecNM',
+            'email' => 'admin@merida.tecnm.mx',
+            'password' => Hash::make('TecNM#2026'),
+            'role' => 'admin',
+            'is_active' => true,
+        ]);
+
         // 1. Cuenta de Prefectura
         $prefecto = User::create([
             'name' => 'Lic. Carlos Canché Pech',
@@ -35,7 +44,7 @@ class DatabaseSeeder extends Seeder
 
         $estudiante2 = User::create([
             'name' => 'Mariana Yam Puc',
-            'email' => 'mariana.yam@itmerida.edu.mx',
+            'email' => 'mariana.yam@merida.tecnm.mx',
             'password' => Hash::make('TecNM#2026'),
             'role' => 'usuario_general',
             'is_active' => true,

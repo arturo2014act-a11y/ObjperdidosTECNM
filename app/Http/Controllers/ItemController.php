@@ -29,24 +29,32 @@ class ItemController extends Controller
     ];
 
     /**
-     * Catálogo institucional de áreas del campus (RF-32, RF-33).
+     * Catálogo institucional de áreas generales del Campus Poniente (RF-32, RF-33).
      */
     public const AREAS = [
-        'Campus Poniente - Edificio A',
-        'Campus Poniente - Edificio B',
-        'Campus Poniente - Edificio C',
-        'Campus Poniente - Edificio D',
-        'Campus Poniente - Edificio E',
-        'Campus Poniente - Edificio F',
-        'Campus Poniente - Edificio G',
-        'Campus Poniente - Edificio H (Laboratorios)',
-        'Campus Poniente - Cafetería Principal',
-        'Campus Poniente - Biblioteca Central',
-        'Campus Poniente - Canchas Deportivas',
-        'Campus Poniente - Explanada Cívica',
-        'Campus Central - Edificio Administrativo',
-        'Campus Central - Biblioteca',
+        'Edificio H',
+        'Edificio G',
+        'Edificio B',
+        'Edificio C',
+        'Cafetería Principal',
+        'Biblioteca Central',
+        'Canchas Deportivas',
+        'Explanada Cívica',
         'Otra área del campus',
+    ];
+
+    /**
+     * Catálogo dependiente de espacios específicos (aulas / laboratorios) por edificio (RF-32).
+     */
+    public const SPACES = [
+        'Edificio H' => [
+            'H1', 'H2', 'H3', 'H4', 'H5', 'H6',
+            'H7', 'H8', 'H9', 'H10', 'H11', 'H12'
+        ],
+        'Edificio G' => [
+            'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8',
+            'LCOM1', 'LCOM2', 'LCOM3', 'LCOM4'
+        ],
     ];
 
     /**
@@ -116,8 +124,9 @@ class ItemController extends Controller
     public function create(): View
     {
         return view('items.create', [
-            'categories' => self::CATEGORIES,
-            'areas' => self::AREAS,
+            'categories' => config('catalogos.categories', self::CATEGORIES),
+            'areas' => config('catalogos.areas', self::AREAS),
+            'spaces' => config('catalogos.spaces', self::SPACES),
         ]);
     }
 
@@ -131,14 +140,17 @@ class ItemController extends Controller
             return redirect()->route('items.index')->with('error', 'Debes iniciar sesión para reportar un objeto.');
         }
 
+        $categories = config('catalogos.categories', self::CATEGORIES);
+        $areas = config('catalogos.areas', self::AREAS);
+
         // Reglas de validación dinámicas según el tipo (RF-18)
         $rules = [
             'type' => ['required', 'in:perdido,encontrado'],
             'name' => ['required', 'string', 'max:100'], // RF-38
             'description' => ['required', 'string', 'max:500'], // RF-38
-            'category' => ['required', 'in:' . implode(',', self::CATEGORIES)], // RF-30
+            'category' => ['required', 'in:' . implode(',', $categories)], // RF-30
             'category_specification' => ['nullable', 'string', 'max:100'], // RF-31
-            'area' => ['required', 'in:' . implode(',', self::AREAS)], // RF-32, RF-33
+            'area' => ['required', 'in:' . implode(',', $areas)], // RF-32, RF-33
             'academic_class' => ['nullable', 'string', 'max:100'], // RF-35, RF-36
         ];
 

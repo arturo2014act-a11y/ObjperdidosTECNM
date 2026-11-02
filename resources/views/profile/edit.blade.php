@@ -11,7 +11,7 @@
                     <i class="bi bi-person-gear me-2 text-warning"></i>Mi Perfil Institucional
                 </h1>
                 <p class="text-muted small mb-0">
-                    Administra tus datos personales y credenciales de acceso de TecNM Mérida (RF-81 a RF-85).
+                    Administra tus datos personales y credenciales de acceso de TecNM Mérida.
                 </p>
             </div>
             <a href="{{ route('items.index') }}" class="btn btn-outline-secondary btn-sm">
@@ -25,7 +25,7 @@
                 <i class="bi bi-person-badge me-2 text-primary"></i>Datos Personales
             </h5>
             <p class="text-muted small mb-3">
-                (RF-83) Puedes modificar exclusivamente tu nombre completo. El correo institucional y rol son ineditables desde el perfil.
+ Puedes modificar exclusivamente tu nombre completo. El correo institucional y rol son ineditables desde el perfil.
             </p>
 
             <form action="{{ route('profile.update-name') }}" method="POST">
@@ -66,7 +66,7 @@
                         maxlength="100" 
                         required>
                     <div class="form-text small">
-                        Máx. 100 caracteres. Solo letras, espacios, acentos, ñ, guiones y apóstrofes; sin números (RF-81, RF-82).
+                        Máx. 100 caracteres. Solo letras, espacios, acentos, ñ, guiones y apóstrofes; sin números.
                     </div>
                     @error('name', 'nameUpdate')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -87,7 +87,7 @@
                 <i class="bi bi-key-fill me-2 text-warning"></i>Seguridad y Contraseña
             </h5>
             <p class="text-muted small mb-3">
-                (RF-84) Actualiza tu contraseña proporcionando tu clave actual y la nueva contraseña confirmada.
+ Actualiza tu contraseña proporcionando tu clave actual y la nueva contraseña confirmada.
             </p>
 
             <form action="{{ route('profile.update-password') }}" method="POST">
@@ -122,7 +122,7 @@
                         class="form-control @error('password', 'passwordUpdate') is-invalid @enderror" 
                         required>
                     <div class="form-text small">
-                        Mínimo 8 caracteres, al menos 1 mayúscula, 1 minúscula, 1 número y 1 símbolo especial (RF-73).
+                        Mínimo 8 caracteres, al menos 1 mayúscula, 1 minúscula, 1 número y 1 símbolo especial.
                     </div>
                     @error('password', 'passwordUpdate')
                         <div class="invalid-feedback">{{ $message }}</div>

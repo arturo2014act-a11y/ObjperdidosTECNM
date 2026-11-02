@@ -14,6 +14,14 @@ use Illuminate\Support\Facades\Hash;
 class RegisteredUserController extends Controller
 {
     /**
+     * Muestra el formulario de registro (RF-10, RF-80).
+     */
+    public function create(): \Illuminate\View\View
+    {
+        return view('auth.register');
+    }
+
+    /**
      * Handle an incoming registration request.
      */
     public function store(RegisterRequest $request): RedirectResponse|JsonResponse
@@ -40,7 +48,7 @@ class RegisteredUserController extends Controller
             ], 201);
         }
 
-        return redirect()->intended('/dashboard');
+        return redirect()->route('verification.notice')->with('status', 'Enlace enviado. Revisa tu bandeja de entrada en el correo institucional.');
     }
 }
 

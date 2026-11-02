@@ -10,7 +10,7 @@
                 <i class="bi bi-card-checklist me-2 text-warning"></i>Mis Publicaciones
             </h1>
             <p class="text-muted mb-0 small">
-                Consulta el estado de tus objetos reportados, motivos de revisión y solicita el cierre de tus pertenencias (RF-24).
+                Consulta el estado de tus objetos reportados, motivos de revisión y solicita el cierre de tus pertenencias.
             </p>
         </div>
         <a href="{{ route('items.create') }}" class="btn btn-warning fw-bold btn-sm shadow-sm">
@@ -41,7 +41,7 @@
                             <th>Tipo</th>
                             <th>Objeto y Ubicación</th>
                             <th>Fecha</th>
-                            <th>Estado Actual (RF-24)</th>
+                            <th>Estado Actual</th>
                             <th class="text-end pe-4">Acciones</th>
                         </tr>
                     </thead>
@@ -68,7 +68,7 @@
                                     {{-- Si fue rechazado, mostrar el motivo obligatorio de prefectura (RF-21) --}}
                                     @if ($item->status === 'rechazado' && $item->rejection_reason)
                                         <div class="alert alert-danger py-1 px-2 mt-2 mb-0 small" role="alert">
-                                            <strong><i class="bi bi-x-circle me-1"></i>Motivo del rechazo de Prefectura (RF-21):</strong>
+                                            <strong><i class="bi bi-x-circle me-1"></i>Motivo del rechazo de Prefectura:</strong>
                                             {{ $item->rejection_reason }}
                                         </div>
                                     @endif
@@ -93,7 +93,7 @@
                                             @break
                                         @case('cierre_pendiente')
                                             <span class="badge bg-warning text-dark">
-                                                <i class="bi bi-clock-history me-1"></i>Cierre pendiente de revisión (RF-49)
+                                                <i class="bi bi-clock-history me-1"></i>Cierre pendiente de revisión
                                             </span>
                                             <div class="text-muted" style="font-size: 0.75rem;">
                                                 Prefectura está validando tu solicitud
@@ -131,7 +131,7 @@
 
                                         {{-- Si fue rechazado, opción de crear uno nuevo corregido (RF-21) --}}
                                         @if ($item->status === 'rechazado')
-                                            <a href="{{ route('items.create') }}" class="btn btn-outline-primary btn-sm" title="Crear reporte nuevo corregido (RF-21)">
+                                            <a href="{{ route('items.create') }}" class="btn btn-outline-primary btn-sm" title="Crear reporte nuevo corregido">
                                                 <i class="bi bi-arrow-repeat me-1"></i> Nuevo Reporte
                                             </a>
                                         @endif
@@ -156,7 +156,7 @@
                                                     ¿Has recuperado tu objeto: <strong>{{ $item->name }}</strong>?
                                                 </p>
                                                 <div class="alert alert-light border-success small mb-0">
-                                                    (RF-17, RF-49) Al confirmar, tu publicación pasará a estado <strong>«Cierre pendiente de revisión»</strong>. Prefectura validará la solicitud para retirar definitivamente el reporte del muro.
+ Al confirmar, tu publicación pasará a estado <strong>«Cierre pendiente de revisión»</strong>. Prefectura validará la solicitud para retirar definitivamente el reporte del muro.
                                                 </div>
                                             </div>
                                             <div class="modal-footer">

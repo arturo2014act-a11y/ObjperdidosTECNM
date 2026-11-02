@@ -128,12 +128,27 @@
                         <a href="{{ route('profile.edit') }}" class="btn btn-outline-light btn-sm" title="Editar Mi Perfil">
                             <i class="bi bi-gear"></i>
                         </a>
+
+                        {{-- Botón de Cierre de Sesión (RF-63) --}}
+                        <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-light btn-sm" title="Cerrar Sesión">
+                                <i class="bi bi-box-arrow-right"></i>
+                            </button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="btn btn-outline-light btn-sm fw-semibold">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar Sesión
+                        </a>
+                        <a href="{{ route('register') }}" class="btn btn-warning btn-sm fw-bold">
+                            <i class="bi bi-person-plus me-1"></i> Registrarse
+                        </a>
                     @endauth
 
-                    {{-- Botón para abrir el conmutador de roles --}}
-                    <button type="button" class="btn btn-warning btn-sm fw-bold d-flex align-items-center gap-1 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalSwitchRole">
+                    {{-- Botón para abrir el conmutador de roles (Prototipo) --}}
+                    <button type="button" class="btn btn-sm btn-outline-warning fw-bold d-flex align-items-center gap-1 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalSwitchRole" title="Simulador rápido de roles">
                         <i class="bi bi-arrow-repeat"></i>
-                        <span>Cambiar Rol</span>
+                        <span class="d-none d-md-inline">Probar Rol</span>
                     </button>
                 </div>
             </div>
@@ -172,7 +187,7 @@
                                 required>
                         </div>
                         <div class="form-text small">
-                            Dominios aceptados: <code>@merida.tecnm.mx</code> o <code>@itmerida.edu.mx</code>.
+                            Dominio institucional único aceptado: <code>@merida.tecnm.mx</code>.
                         </div>
 
                         <div class="mt-2 d-flex flex-wrap gap-1 align-items-center">

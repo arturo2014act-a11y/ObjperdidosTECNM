@@ -34,7 +34,7 @@
                         type="text" 
                         name="search" 
                         class="form-control border-start-0 bg-light" 
-                        placeholder="Buscar por nombre o descripción del objeto (RF-39)..." 
+                        placeholder="Buscar por nombre o descripción del objeto..." 
                         value="{{ request('search') }}">
                 </div>
             </div>

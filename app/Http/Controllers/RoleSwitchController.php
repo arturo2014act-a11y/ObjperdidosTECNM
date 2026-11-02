@@ -22,7 +22,7 @@ class RoleSwitchController extends Controller
                 'required',
                 'string',
                 'email',
-                'regex:/^[a-zA-Z0-9._%+-]+@(merida\.tecnm\.mx|itmerida\.edu\.mx)$/i',
+                'regex:/^[a-zA-Z0-9._%+-]+@merida\.tecnm\.mx$/i',
             ],
             'role' => [
                 'required',
@@ -31,7 +31,7 @@ class RoleSwitchController extends Controller
             ],
         ], [
             'email.required' => 'Debes ingresar tu correo institucional.',
-            'email.regex' => 'El correo debe pertenecer estrictamente a @merida.tecnm.mx o @itmerida.edu.mx.',
+            'email.regex' => 'El correo debe pertenecer estrictamente al dominio institucional único @merida.tecnm.mx.',
             'role.required' => 'Debes seleccionar un rol a asignar.',
             'role.in' => 'El rol seleccionado no es válido en el sistema.',
         ]);

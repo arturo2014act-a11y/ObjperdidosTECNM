@@ -66,7 +66,7 @@
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link fw-semibold position-relative py-3" id="audit-tab" data-bs-toggle="tab" data-bs-target="#audit-pane" type="button" role="tab">
-            <i class="bi bi-journal-text me-2 text-dark"></i> Bitácora de Auditoría (RF-56)
+            <i class="bi bi-journal-text me-2 text-dark"></i> Bitácora de Auditoría
         </button>
     </li>
 </ul>
@@ -84,7 +84,7 @@
                         <i class="bi bi-hourglass-split me-2 text-warning"></i>Objetos Encontrados Pendientes de Aprobación
                     </h5>
                     <small class="text-muted">
-                        Publicaciones ocultas del muro público hasta constatar la entrega física en la oficina de Prefectura (RF-50, RF-53).
+                        Publicaciones ocultas del muro público hasta constatar la entrega física en la oficina de Prefectura.
                     </small>
                 </div>
                 <span class="badge bg-warning text-dark px-3 py-2">
@@ -110,6 +110,23 @@
                                         <span class="badge bg-secondary">Folio #{{ $item->id }}</span>
                                     </div>
                                     <div class="card-body">
+                                        {{-- Cuadro de Imagen del Objeto --}}
+                                        <div class="rounded overflow-hidden mb-3 bg-light border d-flex align-items-center justify-content-center" style="height: 190px;">
+                                            @if ($item->image_path && Storage::disk('public')->exists($item->image_path))
+                                                <img src="{{ asset('storage/' . $item->image_path) }}" 
+                                                     alt="{{ $item->name }}" 
+                                                     class="w-100 h-100 object-fit-cover"
+                                                     style="cursor: pointer;"
+                                                     onclick="window.open(this.src, '_blank')"
+                                                     title="Clic para ver en tamaño completo">
+                                            @else
+                                                <div class="text-center text-muted p-3">
+                                                    <i class="bi bi-image fs-1 opacity-50 d-block mb-1"></i>
+                                                    <span class="small">Sin fotografía adjunta</span>
+                                                </div>
+                                            @endif
+                                        </div>
+
                                         <h5 class="card-title fw-bold text-tecnm mb-2">{{ $item->name }}</h5>
                                         <p class="card-text text-muted small mb-3">
                                             {{ Str::limit($item->description, 180) }}
@@ -132,7 +149,7 @@
                                         <div class="author-box mb-3">
                                             <div class="d-flex align-items-center justify-content-between mb-1">
                                                 <span class="badge bg-dark" style="font-size: 0.7rem;">
-                                                    <i class="bi bi-eye-fill me-1"></i>Visible solo para Prefectura (RF-44)
+                                                    <i class="bi bi-eye-fill me-1"></i>Visible solo para Prefectura
                                                 </span>
                                             </div>
                                             <div class="fw-semibold text-dark small">
@@ -176,7 +193,7 @@
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" name="confirm_physical_receipt" id="confirm_physical_receipt_{{ $item->id }}" value="1" required>
                                                     <label class="form-check-label fw-bold text-dark small" for="confirm_physical_receipt_{{ $item->id }}">
-                                                        (RF-53) Confirmo formalmente que el objeto ha sido entregado en custodia física en el módulo de Prefectura del TecNM.
+ Confirmo formalmente que el objeto ha sido entregado en custodia física en el módulo de Prefectura del TecNM.
                                                     </label>
                                                 </div>
                                             </div>
@@ -204,7 +221,7 @@
                                         </div>
                                         <div class="modal-body">
                                             <p class="small text-muted mb-3">
-                                                Al rechazar la publicación, no se mostrará en el muro y se le notificará al usuario el motivo ingresado (RF-21).
+                                                Al rechazar la publicación, no se mostrará en el muro y se le notificará al usuario el motivo ingresado.
                                             </p>
                                             <div class="mb-3">
                                                 <label for="rejection_reason_{{ $item->id }}" class="form-label fw-bold small">
@@ -249,7 +266,7 @@
                         <i class="bi bi-door-closed me-2 text-info"></i>Solicitudes de Cierre de Objetos Perdidos
                     </h5>
                     <small class="text-muted">
-                        Publicaciones donde el autor reportó haber encontrado su pertenencia ("Ya encontré mi objeto") y solicitó cerrar el caso (RF-50).
+                        Publicaciones donde el autor reportó haber encontrado su pertenencia ("Ya encontré mi objeto") y solicitó cerrar el caso.
                     </small>
                 </div>
                 <span class="badge bg-info text-dark px-3 py-2">
@@ -271,7 +288,7 @@
                                     <th>Folio</th>
                                     <th>Objeto</th>
                                     <th>Ubicación</th>
-                                    <th>Datos del Autor (RF-44)</th>
+                                    <th>Datos del Autor</th>
                                     <th>Fecha Reporte</th>
                                     <th class="text-end">Acciones de Prefectura</th>
                                 </tr>
@@ -376,7 +393,7 @@
                     <i class="bi bi-sliders me-2 text-primary"></i>Publicaciones bajo Gestión del Campus
                 </h5>
                 <small class="text-muted">
-                    Búsqueda, control de entrega presencial, reversión de devoluciones y filtrado administrativo (RF-51).
+                    Búsqueda, control de entrega presencial, reversión de devoluciones y filtrado administrativo.
                 </small>
             </div>
 
@@ -404,7 +421,7 @@
                     </div>
 
                     <div class="col-md-4">
-                        <label for="filter_search" class="form-label small fw-semibold text-muted">Buscador por Nombre (RF-51)</label>
+                        <label for="filter_search" class="form-label small fw-semibold text-muted">Buscador por Nombre</label>
                         <div class="input-group input-group-sm">
                             <span class="input-group-text"><i class="bi bi-search"></i></span>
                             <input type="text" name="search" id="filter_search" class="form-control" placeholder="Ej: Calculadora, Credencial, Mochila..." value="{{ request('search') }}">
@@ -439,7 +456,7 @@
                                     <th>Objeto</th>
                                     <th>Ubicación</th>
                                     <th>Estado Actual</th>
-                                    <th>Datos del Autor (RF-44)</th>
+                                    <th>Datos del Autor</th>
                                     <th class="text-end">Operaciones Prefectura</th>
                                 </tr>
                             </thead>
@@ -540,7 +557,7 @@
                                                             <div class="form-check">
                                                                 <input class="form-check-input" type="checkbox" name="confirm_in_person_delivery" id="confirm_in_person_delivery_{{ $item->id }}" value="1" required>
                                                                 <label class="form-check-label fw-bold text-dark small" for="confirm_in_person_delivery_{{ $item->id }}">
-                                                                    (RF-14, RF-54) Confirmo que el propietario acudió presencialmente a Prefectura, acreditó su identidad/propiedad y recibió el bien.
+ Confirmo que el propietario acudió presencialmente a Prefectura, acreditó su identidad/propiedad y recibió el bien.
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -575,7 +592,7 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="alert alert-warning small mb-3">
-                                                            (RF-55) Esta acción revertirá el objeto a estado <strong>Activo</strong> (volverá a figurar en el muro). Se requiere especificar una justificación obligatoria para la bitácora de auditoría interna.
+ Esta acción revertirá el objeto a estado <strong>Activo</strong> (volverá a figurar en el muro). Se requiere especificar una justificación obligatoria para la bitácora de auditoría interna.
                                                         </div>
 
                                                         <div class="mb-3">
@@ -678,7 +695,7 @@
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                 <div>
                     <h5 class="fw-bold mb-0 text-tecnm">
-                        <i class="bi bi-shield-lock me-2 text-dark"></i>Registro de Auditoría Interna de Acciones (RF-56)
+                        <i class="bi bi-shield-lock me-2 text-dark"></i>Registro de Auditoría Interna de Acciones
                     </h5>
                     <small class="text-muted">
                         Trazabilidad obligatoria: tipo de acción, fecha/hora, cuenta responsable y motivos de decisión.
@@ -701,7 +718,7 @@
                                     <th>Fecha / Hora</th>
                                     <th>Objeto Relacionado</th>
                                     <th>Acción Ejecutada</th>
-                                    <th>Cuenta Responsable (RF-56)</th>
+                                    <th>Cuenta Responsable</th>
                                     <th>Motivo / Justificación</th>
                                     <th>IP</th>
                                 </tr>

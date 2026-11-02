@@ -32,9 +32,36 @@ Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
 Route::put('/perfil/nombre', [ProfileController::class, 'updateName'])->name('profile.update-name');
 Route::put('/perfil/password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
 
+// Autenticación Institucional (RF-09, RF-10, RF-63)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
+    Route::get('/registro', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/registro', [RegisteredUserController::class, 'store']);
+
+    // Recuperación de Contraseña (RF-28, RF-71, RF-72, RF-76, RF-77)
+    Route::get('/recuperar-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'create'])->name('password.request');
+    Route::post('/recuperar-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'store'])->name('password.email');
+    Route::get('/restablecer-password/{token}', [\App\Http\Controllers\Auth\PasswordResetController::class, 'edit'])->name('password.reset');
+    Route::post('/restablecer-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'update'])->name('password.update');
+});
+
+// Cierre de Sesión (RF-63)
+Route::post('/logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+// Verificación de Correo (RF-10, RF-68, RF-69, RF-70)
+Route::middleware('auth')->group(function () {
+    Route::get('/verificar-correo', [\App\Http\Controllers\Auth\EmailVerificationController::class, 'prompt'])->name('verification.notice');
+    Route::get('/verificar-correo/{id}/{hash}', [\App\Http\Controllers\Auth\EmailVerificationController::class, 'verify'])
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('verification.verify');
+    Route::post('/verificar-correo/reenviar', [\App\Http\Controllers\Auth\EmailVerificationController::class, 'send'])
+        ->middleware('throttle:6,1')
+        ->name('verification.send');
+});
+
 // Conmutador de Roles Institucionales con Correo (Para Pruebas del Prototipo)
 Route::post('/switch-role', [RoleSwitchController::class, 'switchRole'])->name('switch-role');
-Route::post('/register', [RegisteredUserController::class, 'store'])->name('register');
 
 // Panel de Gestión de Prefectura (RF-50 a RF-56)
 Route::prefix('prefectura')->name('prefectura.')->group(function () {
