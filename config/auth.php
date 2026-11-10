@@ -96,23 +96,23 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-            'expire' => 60,
+            'expire' => (int) env('AUTH_PASSWORD_RESET_EXPIRE', 15),
             'throttle' => 60,
         ],
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Email Verification Link Expiration
+    | Email Verification Link Expiration (RF-70)
     |--------------------------------------------------------------------------
     |
     | Número de minutos que un enlace de verificación de correo es válido.
     | Configurable mediante la variable de entorno VERIFICATION_EXPIRE en .env.
-    | Por defecto: 60 minutos (1 hora).
+    | Por defecto: 15 minutos.
     |
     */
     'verification' => [
-        'expire' => env('VERIFICATION_EXPIRE', 60),
+        'expire' => (int) env('VERIFICATION_EXPIRE', 15),
     ],
 
     /*

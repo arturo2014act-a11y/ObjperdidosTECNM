@@ -28,6 +28,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/mis-publicaciones', [ItemController::class, 'myItems'])->name('items.my-items');
     Route::post('/items/{item}/request-closure', [ItemController::class, 'requestClosure'])->name('items.request-closure');
 
+    // Sistema de Mensajería Privada entre Usuarios por Publicación (Chat Interno)
+    Route::get('/mis-mensajes', [\App\Http\Controllers\ConversationController::class, 'index'])->name('messages.index');
+    Route::get('/items/{item}/contactar', [\App\Http\Controllers\ConversationController::class, 'start'])->name('messages.start');
+    Route::get('/mensajes/{conversation}', [\App\Http\Controllers\ConversationController::class, 'show'])->name('messages.show');
+    Route::get('/mensajes/{conversation}/poll', [\App\Http\Controllers\ConversationController::class, 'getMessages'])->name('messages.poll');
+    Route::post('/mensajes/{conversation}', [\App\Http\Controllers\ConversationController::class, 'sendMessage'])->name('messages.send');
+
     // Perfil de Usuario (RF-81 a RF-85)
     Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/perfil/nombre', [ProfileController::class, 'updateName'])->name('profile.update-name');

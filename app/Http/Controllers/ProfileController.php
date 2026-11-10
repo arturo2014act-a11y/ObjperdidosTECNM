@@ -73,6 +73,7 @@ class ProfileController extends Controller
             'current_password' => ['required', 'current_password'],
             'password' => [
                 'required',
+                'different:current_password', // No aceptar la misma contraseña en uso
                 'confirmed', // RF-74
                 Password::min(8) // RF-73
                     ->letters()
@@ -84,6 +85,7 @@ class ProfileController extends Controller
             'current_password.required' => 'Debes ingresar tu contraseña actual.',
             'current_password.current_password' => 'La contraseña actual ingresada es incorrecta.',
             'password.required' => 'Debes ingresar una nueva contraseña.',
+            'password.different' => 'La nueva contraseña no puede ser igual a tu contraseña actual.',
             'password.confirmed' => 'La confirmación de la nueva contraseña no coincide.',
         ]);
 

@@ -166,6 +166,14 @@
             border: 1px solid #cbd5e1;
             font-weight: 600;
         }
+        /* Ocultar definitivamente el ojo nativo de contraseñas de Microsoft Edge y navegadores Chromium */
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            pointer-events: none !important;
+        }
     </style>
 </head>
 <body class="bg-light d-flex flex-column min-vh-100">
@@ -196,6 +204,15 @@
                             <i class="bi bi-card-checklist me-1"></i> Mis Publicaciones
                         </a>
                     </li>
+
+                    {{-- Enlace a Mis Mensajes (Requisito 6) --}}
+                    @auth
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('messages.*') ? 'active fw-bold' : '' }}" href="{{ route('messages.index') }}">
+                                <i class="bi bi-chat-left-dots-fill me-1"></i> Mis Mensajes
+                            </a>
+                        </li>
+                    @endauth
 
                     {{-- Enlaces de Prefectura (visible para Prefectura y Administrador) --}}
                     @if (Auth::check() && in_array(Auth::user()->role, ['prefectura', 'admin'], true))

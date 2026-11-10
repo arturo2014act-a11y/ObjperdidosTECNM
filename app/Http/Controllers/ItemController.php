@@ -117,10 +117,25 @@ class ItemController extends Controller
      */
     public function create(): View
     {
+        // Calcular 14 días hábiles atrás (lunes a viernes) para la fecha mínima permitida
+        $subBusinessDays = function (\Carbon\Carbon $date, int $days) {
+            $d = $date->copy();
+            while ($days > 0) {
+                $d->subDay();
+                if (!$d->isWeekend()) {
+                    $days--;
+                }
+            }
+            return $d;
+        };
+
+        $minDatePerdido = $subBusinessDays(now(), 14)->format('Y-m-d');
+
         return view('items.create', [
             'categories' => config('catalogos.categories', self::CATEGORIES),
             'areas' => config('catalogos.areas', self::AREAS),
             'spaces' => config('catalogos.spaces', self::SPACES),
+            'minDatePerdido' => $minDatePerdido,
         ]);
     }
 
@@ -153,14 +168,34 @@ class ItemController extends Controller
             $rules['category_specification'] = ['required', 'string', 'max:100'];
         }
 
-        // Imagen y fecha son OBLIGATORIAS para Encontrado, y OPCIONALES para Perdido (RF-18, RF-34, RNF-02)
+        // Función auxiliar para calcular días hábiles hacia atrás (lunes a viernes)
+        $subBusinessDays = function (\Carbon\Carbon $date, int $days) {
+            $d = $date->copy();
+            while ($days > 0) {
+                $d->subDay();
+                if (!$d->isWeekend()) {
+                    $days--;
+                }
+            }
+            return $d;
+        };
+
+        $minDatePerdido = $subBusinessDays(now(), 14)->format('Y-m-d');
+
+        // Imagen OBLIGATORIA para cualquier tipo de publicación (Perdido o Encontrado)
+        $rules['image'] = ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120']; // máx 5MB (RNF-02)
+
+        // Fecha según el tipo de objeto
         if ($request->input('type') === 'encontrado') {
             $rules['event_date'] = ['required', 'date', 'before_or_equal:today'];
-            // Para Encontrado la imagen es obligatoria (salvo si prefectura la publica sin ella)
-            $rules['image'] = ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120']; // máx 5MB (RNF-02)
         } else {
-            $rules['event_date'] = ['nullable', 'date', 'before_or_equal:today'];
-            $rules['image'] = ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'];
+            // Perdido: Fecha del extravío OBLIGATORIA y válida solo hasta 14 días hábiles atrás
+            $rules['event_date'] = [
+                'required',
+                'date',
+                'before_or_equal:today',
+                'after_or_equal:' . $minDatePerdido,
+            ];
         }
 
         $messages = [
@@ -171,9 +206,10 @@ class ItemController extends Controller
             'category.required' => 'Debes seleccionar una categoría del catálogo.',
             'category_specification.required' => 'Al seleccionar la categoría Otros, debes especificar el tipo de objeto.',
             'area.required' => 'Debes seleccionar el área o edificio donde ocurrió el suceso.',
-            'event_date.required' => 'La fecha del hallazgo es obligatoria para objetos encontrados.',
+            'event_date.required' => 'La fecha del suceso es obligatoria.',
             'event_date.before_or_equal' => 'La fecha no puede ser posterior al día de hoy.',
-            'image.required' => 'Es obligatorio subir una fotografía para objetos encontrados.',
+            'event_date.after_or_equal' => "La fecha del reporte de extravío no puede superar los 14 días hábiles de antigüedad (máximo desde el {$minDatePerdido}).",
+            'image.required' => 'Es obligatorio subir una fotografía del objeto reportado.',
             'image.image' => 'El archivo debe ser una imagen válida (JPG, PNG o WEBP).',
             'image.mimes' => 'La imagen debe ser de tipo: JPG, JPEG, PNG o WEBP.',
             'image.max' => 'La imagen no puede pesar más de 5 MB (RNF-02).',

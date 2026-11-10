@@ -30,7 +30,7 @@ class RegisteredUserController extends Controller
 
         $user = User::create([
             'name' => $validated['name'],
-            'email' => $validated['email'],
+            'email' => strtolower(trim($validated['email'])),
             'password' => Hash::make($validated['password']),
             'role' => 'usuario_general',
             'is_active' => true,

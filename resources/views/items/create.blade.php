@@ -194,7 +194,7 @@
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
                         <label for="event_date" class="form-label small fw-bold">
-                            Fecha del Suceso <span id="eventDateReqMark" class="text-danger d-none">*</span>
+                            Fecha del Suceso <span id="eventDateReqMark" class="text-danger">*</span>
                         </label>
                         <input 
                             type="date" 
@@ -202,9 +202,10 @@
                             id="event_date" 
                             class="form-control @error('event_date') is-invalid @enderror" 
                             value="{{ old('event_date', date('Y-m-d')) }}" 
-                            max="{{ date('Y-m-d') }}">
+                            max="{{ date('Y-m-d') }}"
+                            required>
                         <div class="form-text small" id="eventDateHelp">
-                            Obligatoria para Encontrados, opcional para Perdidos.
+                            Campo obligatorio. Para objetos perdidos se admiten reportes de hasta 14 días hábiles de antigüedad.
                         </div>
                         @error('event_date')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -213,16 +214,17 @@
 
                     <div class="col-md-6">
                         <label for="image" class="form-label small fw-bold">
-                            Fotografía del Objeto <span id="imageReqMark" class="text-danger d-none">*</span>
+                            Fotografía del Objeto <span id="imageReqMark" class="text-danger">*</span>
                         </label>
                         <input 
                             type="file" 
                             name="image" 
                             id="image" 
                             class="form-control @error('image') is-invalid @enderror" 
-                            accept=".jpg,.jpeg,.png,.webp">
+                            accept=".jpg,.jpeg,.png,.webp"
+                            required>
                         <div class="form-text small" id="imageHelp">
-                            JPG, PNG o WEBP. Máx 5 MB.
+                            Fotografía obligatoria (JPG, PNG o WEBP. Máx 5 MB).
                         </div>
                         @error('image')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -346,27 +348,31 @@
         }
     }
 
+    const minDatePerdido = @json($minDatePerdido ?? '');
+
     // Reglas dinámicas por Tipo
     function toggleTypeRules() {
         const isFound = document.getElementById('type_encontrado').checked;
         const notice = document.getElementById('foundNotice');
-        const eventDateReq = document.getElementById('eventDateReqMark');
         const imageReq = document.getElementById('imageReqMark');
         const eventDateInput = document.getElementById('event_date');
+        const eventDateHelp = document.getElementById('eventDateHelp');
         const imageInput = document.getElementById('image');
+
+        // La fecha y la fotografía son obligatorias para cualquier tipo de reporte
+        eventDateInput.setAttribute('required', 'required');
+        imageInput.setAttribute('required', 'required');
 
         if (isFound) {
             notice.classList.remove('d-none');
-            eventDateReq.classList.remove('d-none');
-            imageReq.classList.remove('d-none');
-            eventDateInput.setAttribute('required', 'required');
-            imageInput.setAttribute('required', 'required');
+            eventDateInput.removeAttribute('min');
+            eventDateHelp.textContent = 'Fecha obligatoria en que fue encontrado el objeto (no futura).';
         } else {
             notice.classList.add('d-none');
-            eventDateReq.classList.add('d-none');
-            imageReq.classList.add('d-none');
-            eventDateInput.removeAttribute('required');
-            imageInput.removeAttribute('required');
+            if (minDatePerdido) {
+                eventDateInput.setAttribute('min', minDatePerdido);
+            }
+            eventDateHelp.textContent = 'Fecha obligatoria del extravío. Solo se admiten hasta 14 días hábiles de antigüedad.';
         }
     }
 

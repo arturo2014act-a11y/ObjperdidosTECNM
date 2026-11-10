@@ -127,9 +127,9 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.users.show', $user) }}" class="btn btn-outline-info btn-sm py-0 px-2 small" title="Ver historial individual">
+                                    <span class="badge bg-light text-info border border-info-subtle px-2 py-1 small" title="Eventos registrados en bitácora">
                                         <i class="bi bi-clock-history me-1"></i>{{ $user->userLogs->count() }} eventos
-                                    </a>
+                                    </span>
                                 </td>
                                 <td class="text-end pe-4">
                                     <div class="d-inline-flex gap-1 align-items-center">

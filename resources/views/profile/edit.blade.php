@@ -76,8 +76,6 @@
                 @csrf
                 @method('PUT')
 
-                {{-- Contraseña Actual --}}
-                <div class="mb-3">
                 {{-- Contraseña Actual (RF-74, RF-84) --}}
                 <div class="mb-3">
                     <label for="current_password" class="form-label small fw-bold">

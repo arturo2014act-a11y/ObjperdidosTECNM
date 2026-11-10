@@ -33,10 +33,10 @@ class RegisterRequest extends FormRequest
             ],
 
             // Correo (RF-25, RF-78, RF-79): obligatorio, único y restringido a los dominios autorizados
+            // Acepta mayúsculas y minúsculas indistintamente al escribirlo
             'email' => [
                 'required',
                 'string',
-                'lowercase',
                 'email',
                 'max:255',
                 'unique:' . User::class,

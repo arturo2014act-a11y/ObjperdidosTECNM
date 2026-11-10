@@ -51,6 +51,14 @@ class Item extends Model
     }
 
     /**
+     * Relación: Conversaciones privadas iniciadas por usuarios interesados.
+     */
+    public function conversations(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Conversation::class)->latest();
+    }
+
+    /**
      * Relación: Mensajes y consultas de orientación sobre la pertenencia.
      */
     public function messages(): \Illuminate\Database\Eloquent\Relations\HasMany

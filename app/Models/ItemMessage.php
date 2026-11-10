@@ -11,8 +11,10 @@ class ItemMessage extends Model
     use HasFactory;
 
     protected $fillable = [
+        'conversation_id',
         'item_id',
         'sender_id',
+        'receiver_id',
         'message',
         'is_prefectura',
     ];
@@ -20,6 +22,11 @@ class ItemMessage extends Model
     protected $casts = [
         'is_prefectura' => 'boolean',
     ];
+
+    public function conversation(): BelongsTo
+    {
+        return $this->belongsTo(Conversation::class);
+    }
 
     public function item(): BelongsTo
     {
@@ -30,5 +37,9 @@ class ItemMessage extends Model
     {
         return $this->belongsTo(User::class, 'sender_id');
     }
-}
 
+    public function receiver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'receiver_id');
+    }
+}

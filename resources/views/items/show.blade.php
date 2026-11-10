@@ -138,6 +138,27 @@
                         </div>
                     @endif
 
+                    {{-- Botón Contactar al autor (Requisito 1, 9, 10, 11) --}}
+                    @auth
+                        @if (!$isAuthor && in_array($item->status, ['publicado', 'cierre_pendiente'], true))
+                            <div class="mb-3">
+                                <a href="{{ route('messages.start', $item) }}" class="btn btn-warning w-100 fw-bold shadow-sm py-2">
+                                    <i class="bi bi-chat-dots-fill me-2"></i>Contactar al autor
+                                </a>
+                                <small class="text-muted d-block text-center mt-1" style="font-size: 0.78rem;">
+                                    Inicia una conversación privada con quien publicó este objeto.
+                                </small>
+                            </div>
+                        @elseif ($isAuthor)
+                            {{-- Si el usuario es el autor, mostrar acceso a las conversaciones recibidas de este objeto --}}
+                            <div class="mb-3">
+                                <a href="{{ route('messages.index') }}" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="bi bi-chat-left-text me-1"></i> Ver mensajes sobre este objeto
+                                </a>
+                            </div>
+                        @endif
+                    @endauth
+
                     {{-- Acciones para el autor --}}
                     @if ($isAuthor && $item->type === 'perdido' && $item->status === 'publicado')
                         <div class="mt-auto pt-3 border-top">
