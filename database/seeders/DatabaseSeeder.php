@@ -50,6 +50,23 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
+        // Cuentas de alumnos y demostración persistentes
+        $estudianteSofi = User::firstOrCreate(['email' => 'le21081478@merida.tecnm.mx'], [
+            'name' => 'Sofi uwu',
+            'password' => Hash::make('TecNM#2026'),
+            'role' => 'usuario_general',
+            'is_active' => true,
+            'email_verified_at' => now(),
+        ]);
+
+        $adminEstudiante = User::firstOrCreate(['email' => 'le22080134@merida.tecnm.mx'], [
+            'name' => 'Admin Estudiante',
+            'password' => Hash::make('TecNM#2026'),
+            'role' => 'admin',
+            'is_active' => true,
+            'email_verified_at' => now(),
+        ]);
+
         // 3. Sección 1: Encontrados pendientes de aprobación (RF-50, RF-53)
         $itemPendiente1 = Item::create([
             'user_id' => $estudiante1->id,

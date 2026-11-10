@@ -77,11 +77,12 @@ return [
     |--------------------------------------------------------------------------
     | Dominios de Correo Institucionales Autorizados (RF-25, RF-78, RF-79)
     |--------------------------------------------------------------------------
-    | Se restringe únicamente a @merida.tecnm.mx para evitar duplicidad de
-    | cuentas por persona (eliminando @itmerida.edu.mx).
+    | Lista configurable de dominios autorizados según RF-79:
+    | exactamente merida.tecnm.mx e itmerida.edu.mx.
     */
     'allowed_email_domains' => [
         'merida.tecnm.mx',
+        'itmerida.edu.mx',
     ],
 
     /*

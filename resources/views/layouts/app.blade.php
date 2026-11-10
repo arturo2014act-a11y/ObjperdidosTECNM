@@ -197,8 +197,8 @@
                         </a>
                     </li>
 
-                    {{-- Enlaces de Prefectura (visible para Prefectura y Admin) --}}
-                    @if (Auth::check() && in_array(Auth::user()->role, ['prefectura', 'admin']))
+                    {{-- Enlaces de Prefectura (visible para Prefectura y Administrador) --}}
+                    @if (Auth::check() && in_array(Auth::user()->role, ['prefectura', 'admin'], true))
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('prefectura.*') ? 'active fw-bold' : '' }}" href="{{ route('prefectura.dashboard') }}">
                                 <i class="bi bi-shield-check me-1"></i> Panel Prefectura

@@ -14,15 +14,12 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Muro Institucional Principal (RF-12)
-Route::get('/', [ItemController::class, 'index'])->name('home');
-Route::get('/muro', [ItemController::class, 'index'])->name('items.index');
-
-// Vista pública de un objeto (sin login requerido)
-Route::get('/items/{item}', [ItemController::class, 'show'])->name('items.show');
-
-// Rutas protegidas: requieren login + correo verificado (RF-10, RF-68)
+// Muro Institucional Principal (RF-12, RF-09: Restringido a usuarios autenticados)
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/', [ItemController::class, 'index'])->name('home');
+    Route::get('/muro', [ItemController::class, 'index'])->name('items.index');
+    Route::get('/items/{item}', [ItemController::class, 'show'])->name('items.show');
+
     // Publicación de Objetos (RF-13, RF-18 a RF-20)
     Route::get('/publicar', [ItemController::class, 'create'])->name('items.create');
     Route::post('/publicar', [ItemController::class, 'store'])->name('items.store');
@@ -30,10 +27,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Mis Publicaciones y Solicitud de Cierre (RF-17, RF-24, RF-49)
     Route::get('/mis-publicaciones', [ItemController::class, 'myItems'])->name('items.my-items');
     Route::post('/items/{item}/request-closure', [ItemController::class, 'requestClosure'])->name('items.request-closure');
-
-    // Comunicación y Orientación Institucional de Pertenencias (API / Chat)
-    Route::get('/items/{item}/messages', [\App\Http\Controllers\ItemMessageController::class, 'index'])->name('items.messages.index');
-    Route::post('/items/{item}/messages', [\App\Http\Controllers\ItemMessageController::class, 'store'])->name('items.messages.store');
 
     // Perfil de Usuario (RF-81 a RF-85)
     Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -69,8 +62,8 @@ Route::middleware('auth')->group(function () {
         ->name('verification.send');
 });
 
-// Conmutador de Roles Institucionales con Correo (Para Pruebas del Prototipo)
-Route::post('/switch-role', [RoleSwitchController::class, 'switchRole'])->name('switch-role');
+// Conmutador de Roles Institucionales - Eliminado por seguridad (RF-26)
+// Las cuentas privilegiadas deben asignarse únicamente por el equipo técnico/seeders.
 
 // Panel de Gestión de Prefectura — requiere login + correo verificado (RF-50 a RF-56)
 Route::middleware(['auth', 'verified', 'role:prefectura'])->prefix('prefectura')->name('prefectura.')->group(function () {

@@ -21,7 +21,7 @@ class EnsureUserHasRole
             abort(404);
         }
 
-        // Permitir acceso si el usuario tiene el rol asignado o si es rol admin (supervisión global)
+        // Permitir acceso si el usuario tiene el rol asignado o si es rol admin (acceso total de supervisión)
         if (in_array($user->role, $roles, true) || $user->role === 'admin') {
             return $next($request);
         }

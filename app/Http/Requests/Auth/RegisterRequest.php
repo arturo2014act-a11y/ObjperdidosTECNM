@@ -32,7 +32,7 @@ class RegisterRequest extends FormRequest
                 'regex:/^[\pL\s\-\'\.]+$/u',
             ],
 
-            // Correo: obligatorio, formato válido, único y restringido únicamente a @merida.tecnm.mx
+            // Correo (RF-25, RF-78, RF-79): obligatorio, único y restringido a los dominios autorizados
             'email' => [
                 'required',
                 'string',
@@ -40,7 +40,7 @@ class RegisterRequest extends FormRequest
                 'email',
                 'max:255',
                 'unique:' . User::class,
-                'regex:/^[a-zA-Z0-9._%+-]+@merida\.tecnm\.mx$/i',
+                'regex:/^[a-zA-Z0-9._%+-]+@(merida\.tecnm\.mx|itmerida\.edu\.mx)$/i',
             ],
 
             // Contraseña: obligatoria, confirmada, min 8 caracteres, mayúscula, minúscula, número y símbolo
@@ -71,7 +71,7 @@ class RegisterRequest extends FormRequest
             'email.required' => 'El correo institucional es obligatorio.',
             'email.email' => 'Debes ingresar una dirección de correo electrónico válida.',
             'email.unique' => 'El correo ya ha sido registrado, por favor intente con uno nuevo. ¿No recuerdas tu contraseña? Haz clic en recuperar contraseña.',
-            'email.regex' => 'Correo institucional no válido. Por favor, utiliza tu correo institucional asignado (@merida.tecnm.mx).',
+            'email.regex' => 'Correo institucional no válido. Por favor, utiliza un dominio institucional autorizado (@merida.tecnm.mx o @itmerida.edu.mx).',
             
             'password.required' => 'La contraseña es obligatoria.',
             'password.confirmed' => 'La confirmación de la contraseña no coincide.',
