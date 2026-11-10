@@ -15,30 +15,13 @@
         </div>
         <div class="d-flex align-items-center gap-2">
             @auth
-                <button type="button" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalSwitchRole">
-                    <i class="bi bi-person-gear"></i>
+                <span class="badge bg-light text-dark border px-3 py-2 d-flex align-items-center gap-1">
+                    <i class="bi bi-shield-check text-tecnm"></i>
                     <span>Rol Actual: <strong>{{ ucfirst(str_replace('_', ' ', Auth::user()->role)) }}</strong></span>
-                </button>
+                </span>
             @endauth
         </div>
     </div>
-
-    @auth
-        @if (Auth::user()->role === 'usuario_general')
-            <div class="col-12 mt-3">
-                <div class="alert alert-info d-flex align-items-center justify-content-between py-2 px-3 shadow-sm" role="alert">
-                    <div class="small">
-                        <i class="bi bi-info-circle-fill me-2"></i>
-                        Estás explorando con el rol de <strong>Usuario General</strong> ({{ Auth::user()->email }}). En producción este panel requiere rol Prefectura. Puedes cambiar de rol cuando gustes.
-                    </div>
-                    <button type="button" class="btn btn-sm btn-info text-white fw-bold py-1 px-3" data-bs-toggle="modal" data-bs-target="#modalSwitchRole">
-                        Cambiar a Prefectura
-                    </button>
-                </div>
-            </div>
-        @endif
-    @endauth
-</div>
 
 {{-- Pestañas de Navegación de Secciones (RF-50, RF-51, RF-56) --}}
 <ul class="nav nav-pills nav-fill bg-white p-2 rounded-3 shadow-sm mb-4" id="prefecturaTabs" role="tablist">
@@ -51,8 +34,7 @@
         </button>
     </li>
     <li class="nav-item" role="presentation">
-        {{-- TEMPORALMENTE DESHABILITADO --}}
-        <button class="nav-link fw-semibold position-relative py-3 disabled" id="closure-tab" type="button" role="tab" disabled title="Funci&oacute;n temporalmente deshabilitada">
+        <button class="nav-link fw-semibold position-relative py-3" id="closure-tab" data-bs-toggle="tab" data-bs-target="#closure-pane" type="button" role="tab">
             <i class="bi bi-check2-circle me-2 text-info"></i> 2. Solicitudes de Cierre
             @if ($pendingClosures->count() > 0)
                 <span class="badge bg-warning text-dark ms-2 rounded-pill">{{ $pendingClosures->count() }}</span>
@@ -60,15 +42,13 @@
         </button>
     </li>
     <li class="nav-item" role="presentation">
-        {{-- TEMPORALMENTE DESHABILITADO --}}
-        <button class="nav-link fw-semibold position-relative py-3 disabled" id="management-tab" type="button" role="tab" disabled title="Funci&oacute;n temporalmente deshabilitada">
+        <button class="nav-link fw-semibold position-relative py-3" id="management-tab" data-bs-toggle="tab" data-bs-target="#management-pane" type="button" role="tab">
             <i class="bi bi-folder2-open me-2 text-success"></i> 3. Publicaciones bajo Gestión
             <span class="badge bg-secondary ms-2 rounded-pill">{{ $managedItems->total() }}</span>
         </button>
     </li>
     <li class="nav-item" role="presentation">
-        {{-- TEMPORALMENTE DESHABILITADO --}}
-        <button class="nav-link fw-semibold position-relative py-3 disabled" id="audit-tab" type="button" role="tab" disabled title="Funci&oacute;n temporalmente deshabilitada">
+        <button class="nav-link fw-semibold position-relative py-3" id="audit-tab" data-bs-toggle="tab" data-bs-target="#audit-pane" type="button" role="tab">
             <i class="bi bi-journal-text me-2 text-dark"></i> Bitácora de Auditoría
         </button>
     </li>

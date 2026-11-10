@@ -11,6 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Prevenir retroceso con páginas en caché tras cerrar sesión (RF-63)
+        $middleware->web(append: [
+            \App\Http\Middleware\PreventBackHistory::class,
+        ]);
+
         // RF-62: Alias para protección estricta entre roles con 404 Not Found
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureUserHasRole::class,

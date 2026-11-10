@@ -21,8 +21,8 @@ class EnsureUserHasRole
             abort(404);
         }
 
-        // Si es rol admin, tiene acceso de supervisión global o verificamos pertenencia
-        if (in_array($user->role, $roles, true) || $user->role === 'admin') {
+        // RF-62: Restricción estricta por roles autorizados en la ruta
+        if (in_array($user->role, $roles, true)) {
             return $next($request);
         }
 

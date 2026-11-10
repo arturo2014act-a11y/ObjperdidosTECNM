@@ -48,6 +48,7 @@ class RoleSwitchController extends Controller
                 'name' => ucwords(str_replace(['.', '_', '-'], ' ', explode('@', $email)[0])),
                 'password' => Hash::make('TecNM#2026'),
                 'is_active' => true,
+                'email_verified_at' => now(),
                 'deactivation_reason' => null,
             ]
         );

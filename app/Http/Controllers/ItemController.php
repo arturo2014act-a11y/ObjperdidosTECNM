@@ -103,7 +103,7 @@ class ItemController extends Controller
         // Asegurar que solo publicaciones activas se vean públicamente (salvo si es el autor, prefectura o admin)
         $user = Auth::user();
         $isAuthor = $user && $user->id === $item->user_id;
-        $isStaff = $user && $user->role === 'prefectura';
+        $isStaff = $user && in_array($user->role, ['prefectura', 'admin'], true);
 
         if ($item->status !== 'publicado' && !$isAuthor && !$isStaff) {
             abort(404);
@@ -175,6 +175,7 @@ class ItemController extends Controller
             'event_date.before_or_equal' => 'La fecha no puede ser posterior al día de hoy.',
             'image.required' => 'Es obligatorio subir una fotografía para objetos encontrados.',
             'image.image' => 'El archivo debe ser una imagen válida (JPG, PNG o WEBP).',
+            'image.mimes' => 'La imagen debe ser de tipo: JPG, JPEG, PNG o WEBP.',
             'image.max' => 'La imagen no puede pesar más de 5 MB (RNF-02).',
         ];
 
@@ -265,7 +266,7 @@ class ItemController extends Controller
 
         // Validar que el usuario sea el autor de la publicación
         if (!$user || $item->user_id !== $user->id) {
-            abort(403, 'No tienes autorización para solicitar el cierre de esta publicación.');
+            return redirect()->route('items.my')->with('error', 'No tienes autorización para solicitar el cierre de esta publicación.');
         }
 
         // Solo objetos perdidos en estado activo/publicado pueden solicitar cierre

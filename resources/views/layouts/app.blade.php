@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -193,104 +193,10 @@
                         </a>
                     @endauth
 
-                    {{-- Botón para abrir el conmutador de roles (Prototipo) --}}
-                    <button type="button" class="btn btn-sm btn-outline-warning fw-bold d-flex align-items-center gap-1 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalSwitchRole" title="Simulador rápido de roles">
-                        <i class="bi bi-arrow-repeat"></i>
-                        <span class="d-none d-md-inline">Probar Rol</span>
-                    </button>
                 </div>
             </div>
         </div>
     </nav>
-
-    {{-- MODAL GLOBAL DE CONMUTADOR DE ROL (CON CORREO) --}}
-    <div class="modal fade" id="modalSwitchRole" tabindex="-1" aria-labelledby="modalSwitchRoleLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form action="{{ route('switch-role') }}" method="POST" class="modal-content shadow">
-                @csrf
-                <div class="modal-header bg-tecnm text-white">
-                    <h5 class="modal-title fs-6 fw-bold" id="modalSwitchRoleLabel">
-                        <i class="bi bi-person-gear me-2 text-warning"></i>Conmutador de Rol Institucional
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="text-muted small mb-3">
-                        Ingresa tu correo institucional para asignarte el rol que desees probar. Si el correo no existe en la base de datos, el sistema creará la cuenta automáticamente.
-                    </p>
-
-                    <div class="mb-3">
-                        <label for="switch_email" class="form-label small fw-bold">
-                            Tu Correo Institucional <span class="text-danger">*</span>
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-envelope-at"></i></span>
-                            <input 
-                                type="email" 
-                                name="email" 
-                                id="switch_email" 
-                                class="form-control" 
-                                placeholder="tu_correo@merida.tecnm.mx" 
-                                value="{{ Auth::check() ? Auth::user()->email : 'prefectura@merida.tecnm.mx' }}" 
-                                required>
-                        </div>
-                        <div class="form-text small">
-                            Dominio institucional único aceptado: <code>@merida.tecnm.mx</code>.
-                        </div>
-
-                        <div class="mt-2 d-flex flex-wrap gap-1 align-items-center">
-                            <span class="small text-muted me-1" style="font-size: 0.75rem;">Sugerencias:</span>
-                            <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2" style="font-size: 0.75rem;" onclick="document.getElementById('switch_email').value='prefectura@merida.tecnm.mx'; document.getElementById('role_prefectura').checked = true;">
-                                prefectura@merida.tecnm.mx (Prefectura)
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2" style="font-size: 0.75rem;" onclick="document.getElementById('switch_email').value='admin@merida.tecnm.mx'; document.getElementById('role_admin').checked = true;">
-                                admin@merida.tecnm.mx (Admin)
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2" style="font-size: 0.75rem;" onclick="document.getElementById('switch_email').value='rodrigo.alonzo@merida.tecnm.mx'; document.getElementById('role_usuario_general').checked = true;">
-                                rodrigo.alonzo@merida.tecnm.mx (Estudiante)
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="mb-2">
-                        <label class="form-label small fw-bold">Selecciona el Rol Deseado <span class="text-danger">*</span></label>
-                        
-                        <div class="list-group">
-                            <label class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-2 cursor-pointer">
-                                <input class="form-check-input flex-shrink-0" type="radio" name="role" id="role_prefectura" value="prefectura" {{ Auth::check() && Auth::user()->role === 'prefectura' ? 'checked' : '' }} required>
-                                <div>
-                                    <div class="fw-bold text-dark small"><i class="bi bi-shield-check text-warning me-1"></i>Prefectura</div>
-                                    <div class="text-muted" style="font-size: 0.75rem;">Recepción física, aprobación de Encontrados, entrega presencial y cierres.</div>
-                                </div>
-                            </label>
-
-                            <label class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-2 cursor-pointer">
-                                <input class="form-check-input flex-shrink-0" type="radio" name="role" id="role_usuario_general" value="usuario_general" {{ Auth::check() && Auth::user()->role === 'usuario_general' ? 'checked' : '' }}>
-                                <div>
-                                    <div class="fw-bold text-dark small"><i class="bi bi-person text-info me-1"></i>Usuario General</div>
-                                    <div class="text-muted" style="font-size: 0.75rem;">Estudiante o docente. Publica reportes, consulta el muro y solicita cierre de Perdidos.</div>
-                                </div>
-                            </label>
-
-                            <label class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-2 cursor-pointer">
-                                <input class="form-check-input flex-shrink-0" type="radio" name="role" id="role_admin" value="admin" {{ Auth::check() && Auth::user()->role === 'admin' ? 'checked' : '' }}>
-                                <div>
-                                    <div class="fw-bold text-dark small"><i class="bi bi-gear-fill text-danger me-1"></i>Administrador</div>
-                                    <div class="text-muted" style="font-size: 0.75rem;">Gestión de cuentas institucionales, activación y desactivación justificada con historial.</div>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary btn-sm">
-                        <i class="bi bi-check-circle me-1"></i> Aplicar y Cambiar Rol
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <!-- Contenedor Principal -->
     <main class="container-fluid px-4 py-4 flex-grow-1">

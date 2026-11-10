@@ -51,10 +51,13 @@ class PrefecturaController extends Controller
             }
         }
 
-        // Buscador por nombre del objeto
+        // Buscador por nombre o descripción del objeto (RF-39, RF-51)
         if ($request->filled('search')) {
             $searchTerm = trim($request->search);
-            $managedQuery->where('name', 'like', '%' . $searchTerm . '%');
+            $managedQuery->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('description', 'like', '%' . $searchTerm . '%');
+            });
         }
 
         $managedItems = $managedQuery->latest()->paginate(10)->withQueryString();
@@ -202,8 +205,8 @@ class PrefecturaController extends Controller
      */
     public function markReturned(Request $request, Item $item): RedirectResponse
     {
-        if ($item->type !== 'encontrado' || $item->status === 'devuelto') {
-            return back()->with('error', 'Solo publicaciones de tipo Encontrado no devueltas pueden marcarse como devueltas.');
+        if ($item->type !== 'encontrado' || $item->status !== 'publicado') {
+            return back()->with('error', 'Solo publicaciones de tipo Encontrado en estado publicado pueden marcarse como devueltas.');
         }
 
         $validated = $request->validate([
