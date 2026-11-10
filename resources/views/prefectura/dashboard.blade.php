@@ -22,6 +22,7 @@
             @endauth
         </div>
     </div>
+</div>
 
 {{-- Pestañas de Navegación de Secciones (RF-50, RF-51, RF-56) --}}
 <ul class="nav nav-pills nav-fill bg-white p-2 rounded-3 shadow-sm mb-4" id="prefecturaTabs" role="tablist">
@@ -318,7 +319,8 @@
                                         </td>
                                     </tr>
 
-                                    {{-- MODAL RECHAZO DE CIERRE (EXIGE MOTIVO OBLIGATORIO) --}}
+                                    <tr><td colspan="6" class="p-0 border-0">
+{{-- MODAL RECHAZO DE CIERRE (EXIGE MOTIVO OBLIGATORIO) --}}
                                     <div class="modal fade" id="modalRejectClosure{{ $item->id }}" tabindex="-1" aria-labelledby="modalRejectClosureLabel{{ $item->id }}" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <form action="{{ route('prefectura.items.reject-closure', $item) }}" method="POST" class="modal-content">
@@ -357,6 +359,7 @@
                                             </form>
                                         </div>
                                     </div>
+</td></tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -527,7 +530,8 @@
                                         </td>
                                     </tr>
 
-                                    {{-- MODAL MARCAR COMO DEVUELTO (RF-14, RF-54: CHECKBOX PRESENCIAL OBLIGATORIO) --}}
+                                    <tr><td colspan="7" class="p-0 border-0">
+{{-- MODAL MARCAR COMO DEVUELTO (RF-14, RF-54: CHECKBOX PRESENCIAL OBLIGATORIO) --}}
                                     @if ($item->type === 'encontrado' && in_array($item->status, ['publicado', 'pendiente']))
                                         <div class="modal fade" id="modalMarkReturned{{ $item->id }}" tabindex="-1" aria-labelledby="modalMarkReturnedLabel{{ $item->id }}" aria-hidden="true">
                                             <div class="modal-dialog">
@@ -659,6 +663,7 @@
                                             </div>
                                         </div>
                                     </div>
+</td></tr>
                                 @endforeach
                             </tbody>
                         </table>
