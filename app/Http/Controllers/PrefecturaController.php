@@ -18,10 +18,9 @@ class PrefecturaController extends Controller
     {
         // El middleware 'auth' garantiza usuario autenticado
 
-        // Sección 1: Encontrados pendientes de aprobación (RF-50)
+        // Sección 1: Publicaciones pendientes de aprobación (Encontrados y Perdidos de usuarios)
         // Invisibles en el muro público, se muestran con datos del autor (RF-44)
         $pendingFound = Item::with(['user', 'logs.user'])
-            ->where('type', 'encontrado')
             ->where('status', 'pendiente')
             ->latest()
             ->get();
@@ -77,26 +76,30 @@ class PrefecturaController extends Controller
     }
 
     /**
-     * Sección 1 - Acción: Aprobar objeto encontrado con confirmación de recepción física (RF-53, RF-56).
+     * Sección 1 - Acción: Aprobar publicación (Perdido o Encontrado) (RF-53, RF-56).
      */
     public function approveFound(Request $request, Item $item): RedirectResponse
     {
-        if ($item->type !== 'encontrado' || $item->status !== 'pendiente') {
+        if ($item->status !== 'pendiente') {
             return back()->with('error', 'El objeto seleccionado no es válido para aprobación.');
         }
 
-        $request->validate([
-            'confirm_physical_receipt' => ['required', 'accepted'],
-        ], [
-            'confirm_physical_receipt.accepted' => 'Es obligatorio confirmar que el objeto fue recibido físicamente en la oficina de Prefectura.',
-        ]);
+        // Si es encontrado, exige la confirmación de recepción física en Prefectura
+        if ($item->type === 'encontrado') {
+            $request->validate([
+                'confirm_physical_receipt' => ['required', 'accepted'],
+            ], [
+                'confirm_physical_receipt.accepted' => 'Es obligatorio confirmar que el objeto fue recibido físicamente en la oficina de Prefectura.',
+            ]);
+            $auditReason = 'Objeto recibido físicamente en Prefectura y aprobado para publicación en muro.';
+        } else {
+            $auditReason = 'Reporte de objeto perdido validado y aprobado por Prefectura para publicación en muro.';
+        }
 
         $item->update([
             'status' => 'publicado',
             'rejection_reason' => null,
         ]);
-
-        $auditReason = 'Objeto recibido físicamente en Prefectura y aprobado para publicación en muro.';
 
         // Registrar auditoría interna (RF-56)
         $this->recordAuditLog(
