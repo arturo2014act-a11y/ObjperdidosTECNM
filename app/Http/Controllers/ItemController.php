@@ -62,13 +62,7 @@ class ItemController extends Controller
      */
     public function index(Request $request): View
     {
-        // En prototipo: asegurar usuario autenticado predeterminado si no hay sesión
-        if (!Auth::check()) {
-            $defaultUser = \App\Models\User::first();
-            if ($defaultUser) {
-                Auth::login($defaultUser);
-            }
-        }
+        // Muro público accesible para invitados y usuarios autenticados
 
         // Solo publicaciones aprobadas / activas en el muro
         $query = Item::with('user')->where('status', 'publicado');
@@ -109,7 +103,7 @@ class ItemController extends Controller
         // Asegurar que solo publicaciones activas se vean públicamente (salvo si es el autor, prefectura o admin)
         $user = Auth::user();
         $isAuthor = $user && $user->id === $item->user_id;
-        $isStaff = $user && in_array($user->role, ['prefectura', 'admin']);
+        $isStaff = $user && $user->role === 'prefectura';
 
         if ($item->status !== 'publicado' && !$isAuthor && !$isStaff) {
             abort(404);
@@ -198,14 +192,17 @@ class ItemController extends Controller
         }
 
         // Determinación del estado según Tipo y Rol
+        $user = $request->user();
         if ($validated['type'] === 'perdido') {
-            // RF-20: Un reporte Perdido válido se publica inmediatamente
-            $status = 'publicado';
-            $successMessage = 'Tu publicación se ha publicado correctamente.'; // RF-59
+            if ($user->role === 'prefectura' || $user->role === 'admin') {
+                $status = 'publicado';
+                $successMessage = 'Tu publicación de objeto perdido se ha publicado correctamente en el muro.';
+            } else {
+                $status = 'pendiente';
+                $successMessage = 'Tu reporte de objeto perdido fue registrado y está pendiente de revisión y aprobación por prefectura.';
+            }
         } else {
-            // Es de tipo 'encontrado'
             if ($user->role === 'prefectura') {
-                // RF-22: Prefectura publica directamente cuando el objeto ya está en custodia
                 $status = 'publicado';
                 $successMessage = 'Publicación de objeto encontrado registrada directamente en el muro por Prefectura.';
             } else {

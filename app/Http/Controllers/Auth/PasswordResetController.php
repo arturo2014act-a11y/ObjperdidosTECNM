@@ -48,17 +48,23 @@ class PasswordResetController extends Controller
     /**
      * Formulario para ingresar la nueva contraseña desde el enlace temporal (RF-28, RF-71).
      */
-    public function edit(Request $request, string $token): View
+    public function edit(Request $request, string $token): View|RedirectResponse
     {
+        $email = strtolower(trim((string) $request->input('email')));
+        $user = User::where('email', $email)->first();
+
+        // RF-71: Validar si el usuario existe y si el token sigue vigente en password_reset_tokens
+        if (!$user || !Password::broker()->tokenExists($user, $token)) {
+            return redirect()->route('password.request')
+                ->with('error', 'El enlace de recuperación es inválido, ya fue utilizado o ha expirado. Por favor, solicita uno nuevo.');
+        }
+
         return view('auth.reset-password', [
             'token' => $token,
-            'email' => $request->input('email'),
+            'email' => $email,
         ]);
     }
 
-    /**
-     * Restablecer contraseña con invalidación de token y política de seguridad (RF-71 a RF-76).
-     */
     public function update(Request $request): RedirectResponse
     {
         $request->validate([

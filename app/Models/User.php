@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\VerifyEmailNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -90,6 +91,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isUsuarioGeneral(): bool
     {
         return $this->role === 'usuario_general';
+    }
+
+    /**
+     * Usa la notificación personalizada con enlace de expiración configurable (RF-68, RF-70).
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmailNotification());
     }
 }
 

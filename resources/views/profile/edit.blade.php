@@ -28,9 +28,9 @@
  Puedes modificar exclusivamente tu nombre completo. El correo institucional y rol son ineditables desde el perfil.
             </p>
 
-            <form action="{{ route('profile.update-name') }}" method="POST">
-                @csrf
-                @method('PUT')
+            <div>
+
+
 
                 {{-- Correo Ineditable (RF-83) --}}
                 <div class="mb-3">
@@ -51,34 +51,16 @@
                         </span>
                     </div>
                 </div>
-
-                {{-- Nombre Completo (RF-81, RF-82) --}}
+                {{-- Nombre Completo Ineditable --}}
                 <div class="mb-3">
-                    <label for="name" class="form-label small fw-bold">
-                        Nombre Completo <span class="text-danger">*</span>
-                    </label>
-                    <input 
-                        type="text" 
-                        name="name" 
-                        id="name" 
-                        class="form-control @error('name', 'nameUpdate') is-invalid @enderror" 
-                        value="{{ old('name', $user->name) }}" 
-                        maxlength="100" 
-                        required>
-                    <div class="form-text small">
-                        Máx. 100 caracteres. Solo letras, espacios, acentos, ñ, guiones y apóstrofes; sin números.
+                    <label class="form-label small fw-bold text-muted">Nombre Completo (Ineditable)</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="bi bi-person-fill text-muted"></i></span>
+                        <input type="text" class="form-control bg-light" value="{{ $user->name }}" readonly disabled>
                     </div>
-                    @error('name', 'nameUpdate')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                    <div class="form-text small">Tu nombre institucional registrado no puede modificarse directamente.</div>
                 </div>
-
-                <div class="text-end">
-                    <button type="submit" class="btn btn-tecnm btn-sm px-4 fw-bold">
-                        <i class="bi bi-check-lg me-1"></i> Guardar Cambios de Nombre
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
 
         {{-- TARJETA 2: CAMBIO DE CONTRASEÑA EN PERFIL (RF-73, RF-74, RF-84, RF-85) --}}
@@ -96,52 +78,83 @@
 
                 {{-- Contraseña Actual --}}
                 <div class="mb-3">
+                {{-- Contraseña Actual (RF-74, RF-84) --}}
+                <div class="mb-3">
                     <label for="current_password" class="form-label small fw-bold">
                         Contraseña Actual <span class="text-danger">*</span>
                     </label>
-                    <input 
-                        type="password" 
-                        name="current_password" 
-                        id="current_password" 
-                        class="form-control @error('current_password', 'passwordUpdate') is-invalid @enderror" 
-                        required>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="bi bi-lock text-muted"></i></span>
+                        <input
+                            type="password"
+                            name="current_password"
+                            id="current_password"
+                            class="form-control @error('current_password', 'passwordUpdate') is-invalid @enderror"
+                            required>
+                        <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('current_password', 'toggleCurrentPassIcon')">
+                            <i class="bi bi-eye" id="toggleCurrentPassIcon"></i>
+                        </button>
+                    </div>
                     @error('current_password', 'passwordUpdate')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                        <div class="text-danger small mt-1">{{ $message }}</div>
                     @enderror
                 </div>
 
-                {{-- Nueva Contraseña (RF-73) --}}
+                {{-- Nueva Contraseña (RF-73, RF-74) --}}
                 <div class="mb-3">
                     <label for="password" class="form-label small fw-bold">
                         Nueva Contraseña <span class="text-danger">*</span>
                     </label>
-                    <input 
-                        type="password" 
-                        name="password" 
-                        id="password" 
-                        class="form-control @error('password', 'passwordUpdate') is-invalid @enderror" 
-                        required>
-                    <div class="form-text small">
-                        Mínimo 8 caracteres, al menos 1 mayúscula, 1 minúscula, 1 número y 1 símbolo especial.
+                    <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="bi bi-shield-lock text-muted"></i></span>
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            class="form-control @error('password', 'passwordUpdate') is-invalid @enderror"
+                            placeholder="Mínimo 8 caracteres, mayúscula, minúscula, número y símbolo"
+                            required
+                            oninput="validatePasswordPolicy(this.value)">
+                        <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('password', 'togglePassIcon')">
+                            <i class="bi bi-eye" id="togglePassIcon"></i>
+                        </button>
                     </div>
                     @error('password', 'passwordUpdate')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                        <div class="text-danger small mt-1">{{ $message }}</div>
                     @enderror
+
+                    {{-- Indicadores dinámicos de política de contraseña (RF-73) --}}
+                    <div class="card bg-light border-0 p-2 mt-2">
+                        <div class="small fw-bold text-muted mb-1">Requisitos de la contraseña:</div>
+                        <ul class="list-unstyled mb-0 small ps-1" style="font-size: 0.8rem;">
+                            <li id="rule-len" class="text-danger"><i class="bi bi-x-circle me-1"></i> Mínimo 8 caracteres</li>
+                            <li id="rule-upper" class="text-danger"><i class="bi bi-x-circle me-1"></i> Al menos una letra mayúscula</li>
+                            <li id="rule-lower" class="text-danger"><i class="bi bi-x-circle me-1"></i> Al menos una letra minúscula</li>
+                            <li id="rule-num" class="text-danger"><i class="bi bi-x-circle me-1"></i> Al menos un número</li>
+                            <li id="rule-sym" class="text-danger"><i class="bi bi-x-circle me-1"></i> Al menos un carácter especial (!@#$%^&*)</li>
+                        </ul>
+                    </div>
                 </div>
 
                 {{-- Confirmar Nueva Contraseña (RF-74) --}}
-                <div class="mb-3">
+                <div class="mb-4">
                     <label for="password_confirmation" class="form-label small fw-bold">
                         Confirmar Nueva Contraseña <span class="text-danger">*</span>
                     </label>
-                    <input 
-                        type="password" 
-                        name="password_confirmation" 
-                        id="password_confirmation" 
-                        class="form-control" 
-                        required>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="bi bi-shield-check text-muted"></i></span>
+                        <input
+                            type="password"
+                            name="password_confirmation"
+                            id="password_confirmation"
+                            class="form-control"
+                            placeholder="Repite la nueva contraseña"
+                            required>
+                        <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('password_confirmation', 'toggleConfirmIcon')">
+                            <i class="bi bi-eye" id="toggleConfirmIcon"></i>
+                        </button>
+                    </div>
                 </div>
-
                 <div class="text-end">
                     <button type="submit" class="btn btn-warning btn-sm px-4 fw-bold">
                         <i class="bi bi-shield-check me-1"></i> Actualizar Contraseña
@@ -151,5 +164,43 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<script>
+    function togglePasswordVisibility(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    }
+
+    function validatePasswordPolicy(val) {
+        updateRule('rule-len', val.length >= 8);
+        updateRule('rule-upper', /[A-Z]/.test(val));
+        updateRule('rule-lower', /[a-z]/.test(val));
+        updateRule('rule-num', /[0-9]/.test(val));
+        updateRule('rule-sym', /[^A-Za-z0-9]/.test(val));
+    }
+
+    function updateRule(elementId, isValid) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        const text = el.textContent.trim().replace(/^[\s\S]*?\s(?=[A-Za-z0-9ÁÉÍÓÚáéíóúM])/, '');
+        if (isValid) {
+            el.className = 'text-success fw-semibold';
+            el.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> ' + (text || el.innerText);
+        } else {
+            el.className = 'text-danger';
+            el.innerHTML = '<i class="bi bi-x-circle me-1"></i> ' + (text || el.innerText);
+        }
+    }
+</script>
+@endpush
 @endsection
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -13,29 +13,81 @@
 
     <style>
         :root {
-            --tecnm-blue: #1B396A;
-            --tecnm-gold: #D4AF37;
-            --tecnm-dark: #0f213d;
+            --tecnm-red:  #7E0827;
+            --tecnm-gold: #D09700;
+            --tecnm-dark: #5a0019;
+            --tecnm-nav-text: #98A6BC;
+        }
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow-x: hidden;
         }
         .bg-tecnm {
-            background-color: var(--tecnm-blue) !important;
+            background-color: var(--tecnm-red) !important;
+            border: none !important;
+            outline: none !important;
         }
         .text-tecnm {
-            color: var(--tecnm-blue) !important;
+            color: var(--tecnm-red) !important;
         }
         .btn-tecnm {
-            background-color: var(--tecnm-blue);
+            background-color: var(--tecnm-gold);
             color: #ffffff;
-            border-color: var(--tecnm-blue);
+            border-color: var(--tecnm-gold);
+            font-weight: 600;
         }
         .btn-tecnm:hover {
-            background-color: var(--tecnm-dark);
+            background-color: #b07d00;
+            border-color: #b07d00;
             color: #ffffff;
+        }
+        .btn-warning {
+            background-color: var(--tecnm-gold) !important;
+            border-color: var(--tecnm-gold) !important;
+            color: #ffffff !important;
+        }
+        .btn-warning:hover {
+            background-color: #b07d00 !important;
+            border-color: #b07d00 !important;
+            color: #ffffff !important;
         }
         .badge-tecnm {
             background-color: var(--tecnm-gold);
-            color: #1a1a1a;
+            color: #ffffff;
             font-weight: 600;
+        }
+        /* Navbar items y enlaces */
+        .bg-tecnm .navbar-nav .nav-item {
+            display: flex;
+            align-items: center;
+        }
+        .bg-tecnm .navbar-nav .nav-link {
+            color: var(--tecnm-nav-text) !important;
+            border-top: none !important;
+            border-left: none !important;
+            border-right: none !important;
+            border-bottom: 3px solid transparent !important;
+            border-radius: 0 !important;
+            padding: 8px 12px !important;
+            margin: 0 !important;
+            outline: none !important;
+            box-shadow: none !important;
+            transition: color 0.15s ease, border-color 0.2s ease;
+        }
+        .bg-tecnm .navbar-nav .nav-link:hover {
+            color: #ffffff !important;
+            border-bottom-color: rgba(255, 255, 255, 0.6) !important;
+        }
+        .bg-tecnm .navbar-nav .nav-link.active,
+        .bg-tecnm .navbar-nav .nav-link.is-current {
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            border-bottom-color: #ffffff !important;
+            background-color: transparent !important;
+        }
+        .navbar-brand {
+            color: #ffffff !important;
         }
         .card-custom {
             border-radius: 0.75rem;
@@ -48,7 +100,7 @@
         }
         .author-box {
             background-color: #f8f9fa;
-            border-left: 4px solid var(--tecnm-blue);
+            border-left: 4px solid var(--tecnm-red);
             padding: 0.6rem 0.85rem;
             border-radius: 0.25rem;
         }
@@ -60,7 +112,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-tecnm sticky-top shadow-sm">
         <div class="container-fluid px-4">
             <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="{{ route('items.index') }}">
-                <i class="bi bi-box2-heart fs-4 text-warning"></i>
+                <img src="{{ asset('img/logo_tecnm.svg') }}" alt="Logo TecNM" style="height: 36px; width: auto; filter: brightness(0) invert(1);">
                 <span>TecNM Mérida <span class="fw-light opacity-75 d-none d-sm-inline">| Campus Poniente</span></span>
             </a>
 
@@ -72,15 +124,11 @@
                 {{-- Enlaces Principales de Navegación --}}
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3 gap-1">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('items.index') ? 'active fw-bold' : '' }}" href="{{ route('items.index') }}">
+                        <a class="nav-link {{ request()->routeIs('items.index') || request()->routeIs('home') ? 'active fw-bold' : '' }}" href="{{ route('items.index') }}">
                             <i class="bi bi-grid-fill me-1"></i> Muro de Objetos
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('items.create') ? 'active fw-bold' : '' }}" href="{{ route('items.create') }}">
-                            <i class="bi bi-plus-circle-fill me-1 text-warning"></i> Publicar Objeto
-                        </a>
-                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('items.my-items') ? 'active fw-bold' : '' }}" href="{{ route('items.my-items') }}">
                             <i class="bi bi-card-checklist me-1"></i> Mis Publicaciones
@@ -90,7 +138,7 @@
                     {{-- Enlaces de Prefectura (visible para Prefectura y Admin) --}}
                     @if (Auth::check() && in_array(Auth::user()->role, ['prefectura', 'admin']))
                         <li class="nav-item">
-                            <a class="nav-link text-warning {{ request()->routeIs('prefectura.*') ? 'active fw-bold' : '' }}" href="{{ route('prefectura.dashboard') }}">
+                            <a class="nav-link {{ request()->routeIs('prefectura.*') ? 'active fw-bold' : '' }}" href="{{ route('prefectura.dashboard') }}">
                                 <i class="bi bi-shield-check me-1"></i> Panel Prefectura
                             </a>
                         </li>
@@ -99,7 +147,7 @@
                     {{-- Enlaces de Administración de Cuentas (visible solo para Admin) --}}
                     @if (Auth::check() && Auth::user()->role === 'admin')
                         <li class="nav-item">
-                            <a class="nav-link text-info {{ request()->routeIs('admin.*') ? 'active fw-bold' : '' }}" href="{{ route('admin.users.index') }}">
+                            <a class="nav-link {{ request()->routeIs('admin.*') ? 'active fw-bold' : '' }}" href="{{ route('admin.users.index') }}">
                                 <i class="bi bi-people-fill me-1"></i> Cuentas (Admin)
                             </a>
                         </li>
@@ -294,6 +342,28 @@
         </div>
     </footer>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const currentPath = window.location.pathname.replace(/\/+$/, '');
+            const navLinks = document.querySelectorAll('.bg-tecnm .navbar-nav .nav-link');
+            
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (!href) return;
+                try {
+                    const linkUrl = new URL(href, window.location.origin);
+                    const linkPath = linkUrl.pathname.replace(/\/+$/, '');
+                    
+                    const isHome = (currentPath === '' || currentPath === '/muro') && (linkPath === '' || linkPath === '/muro');
+                    const isMatch = isHome || (linkPath !== '' && linkPath !== '/' && currentPath.startsWith(linkPath));
+                    
+                    if (isMatch) {
+                        link.classList.add('active', 'is-current');
+                    }
+                } catch (e) {}
+            });
+        });
+    </script>
     <!-- Bootstrap 5.3 Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')

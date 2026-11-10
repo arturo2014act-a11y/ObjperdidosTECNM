@@ -21,7 +21,7 @@
                     @else
                         <div class="py-5 text-muted">
                             <i class="bi {{ $item->type === 'perdido' ? 'bi-question-circle' : 'bi-box-seam' }} display-1 opacity-25"></i>
-                            <div class="small mt-2">Esta publicación no incluye imagen adjunta</div>
+                            <div class="small mt-2 px-3">Estamos buscando la imagen por favor espere...</div>
                         </div>
                     @endif
                 </div>
@@ -116,7 +116,7 @@
                     @if ($isStaff || $isAuthor)
                         <div class="author-box mb-3">
                             <span class="badge bg-dark mb-1" style="font-size: 0.7rem;">
-                                <i class="bi bi-shield-lock-fill me-1"></i>Datos del Autor (Visible según RF-44)
+                                <i class="bi bi-shield-lock-fill me-1"></i>Datos del Autor (Visible solo para Prefectura y Autor)
                             </span>
                             <div class="fw-bold small text-dark">
                                 <i class="bi bi-person-fill text-tecnm me-1"></i>{{ $item->user->name ?? 'Usuario no asignado' }}

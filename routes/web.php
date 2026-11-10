@@ -18,19 +18,24 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [ItemController::class, 'index'])->name('home');
 Route::get('/muro', [ItemController::class, 'index'])->name('items.index');
 
-// Publicación de Objetos (RF-13, RF-18 a RF-20)
-Route::get('/publicar', [ItemController::class, 'create'])->name('items.create');
-Route::post('/publicar', [ItemController::class, 'store'])->name('items.store');
+// Vista pública de un objeto (sin login requerido)
 Route::get('/items/{item}', [ItemController::class, 'show'])->name('items.show');
 
-// Mis Publicaciones y Solicitud de Cierre (RF-17, RF-24, RF-49)
-Route::get('/mis-publicaciones', [ItemController::class, 'myItems'])->name('items.my-items');
-Route::post('/items/{item}/request-closure', [ItemController::class, 'requestClosure'])->name('items.request-closure');
+// Rutas protegidas: requieren login + correo verificado (RF-10, RF-68)
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Publicación de Objetos (RF-13, RF-18 a RF-20)
+    Route::get('/publicar', [ItemController::class, 'create'])->name('items.create');
+    Route::post('/publicar', [ItemController::class, 'store'])->name('items.store');
 
-// Perfil de Usuario (RF-81 a RF-85)
-Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
-Route::put('/perfil/nombre', [ProfileController::class, 'updateName'])->name('profile.update-name');
-Route::put('/perfil/password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
+    // Mis Publicaciones y Solicitud de Cierre (RF-17, RF-24, RF-49)
+    Route::get('/mis-publicaciones', [ItemController::class, 'myItems'])->name('items.my-items');
+    Route::post('/items/{item}/request-closure', [ItemController::class, 'requestClosure'])->name('items.request-closure');
+
+    // Perfil de Usuario (RF-81 a RF-85)
+    Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/perfil/nombre', [ProfileController::class, 'updateName'])->name('profile.update-name');
+    Route::put('/perfil/password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
+});
 
 // Autenticación Institucional (RF-09, RF-10, RF-63)
 Route::middleware('guest')->group(function () {
@@ -63,8 +68,8 @@ Route::middleware('auth')->group(function () {
 // Conmutador de Roles Institucionales con Correo (Para Pruebas del Prototipo)
 Route::post('/switch-role', [RoleSwitchController::class, 'switchRole'])->name('switch-role');
 
-// Panel de Gestión de Prefectura (RF-50 a RF-56)
-Route::prefix('prefectura')->name('prefectura.')->group(function () {
+// Panel de Gestión de Prefectura — requiere login + correo verificado (RF-50 a RF-56)
+Route::middleware(['auth', 'verified', 'role:prefectura'])->prefix('prefectura')->name('prefectura.')->group(function () {
     Route::get('/dashboard', [PrefecturaController::class, 'dashboard'])->name('dashboard');
 
     // Sección 1: Encontrados pendientes de aprobación (RF-50, RF-53, RF-21)
@@ -80,8 +85,8 @@ Route::prefix('prefectura')->name('prefectura.')->group(function () {
     Route::post('/items/{item}/revert-returned', [PrefecturaController::class, 'revertReturned'])->name('items.revert-returned');
 });
 
-// Panel de Administración de Cuentas (RF-27, RF-86 a RF-91)
-Route::prefix('admin')->name('admin.')->group(function () {
+// Panel de Administración de Cuentas — requiere login + correo verificado (RF-27, RF-86 a RF-91)
+Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/cuentas', [AdminController::class, 'index'])->name('users.index');
     Route::get('/cuentas/{user}', [AdminController::class, 'show'])->name('users.show');
     Route::post('/cuentas/{user}/desactivar', [AdminController::class, 'deactivate'])->name('users.deactivate');

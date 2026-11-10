@@ -37,11 +37,15 @@ class AuthenticatedSessionController extends Controller
 
         $throttleKey = Str::transliterate(Str::lower($request->input('email')).'|'.$request->ip());
 
-        // RF-65: Control de intentos fallidos (máximo 5 intentos por minuto)
-        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+        // RF-65: Umbral y duración definidos en config('auth.throttle')
+        $maxAttempts = (int) config('auth.throttle.max_attempts', 5);
+        $decaySeconds = (int) config('auth.throttle.decay_seconds', 60);
+
+        // Control de intentos fallidos con bloqueo temporal y mensaje informativo con cuenta regresiva
+        if (RateLimiter::tooManyAttempts($throttleKey, $maxAttempts)) {
             $seconds = RateLimiter::availableIn($throttleKey);
             throw ValidationException::withMessages([
-                'email' => 'Acceso bloqueado temporalmente por seguridad. Inténtalo más tarde.',
+                'email' => "Demasiados intentos de acceso fallidos. Tu acceso ha sido bloqueado temporalmente por seguridad. Por favor, intenta de nuevo en {$seconds} segundos.",
             ]);
         }
 
@@ -49,9 +53,9 @@ class AuthenticatedSessionController extends Controller
         $remember = $request->boolean('remember');
 
         if (!Auth::validate($credentials)) {
-            RateLimiter::hit($throttleKey, 60);
+            RateLimiter::hit($throttleKey, $decaySeconds);
             throw ValidationException::withMessages([
-                'email' => __('auth.failed'),
+                'email' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
             ]);
         }
 
@@ -66,7 +70,14 @@ class AuthenticatedSessionController extends Controller
         RateLimiter::clear($throttleKey);
         $request->session()->regenerate();
 
-        return redirect()->intended(route('items.index'));
+        // Redirección según rol tras autenticación
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.users.index');
+        } elseif ($user->role === 'prefectura') {
+            return redirect()->route('prefectura.dashboard');
+        }
+
+        return redirect()->route('items.index');
     }
 
     /**

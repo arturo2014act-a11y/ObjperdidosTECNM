@@ -24,12 +24,12 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // Nombre: obligatorio, máximo 100 caracteres y sin números (solo letras y espacios, incluye acentos y ñ)
+            // Nombre (RF-81, RF-82): obligatorio, máx 100 caracteres, solo letras, espacios, acentos, ñ, guiones y apóstrofos
             'name' => [
                 'required',
                 'string',
                 'max:100',
-                'regex:/^[\pL\s]+$/u',
+                'regex:/^[\pL\s\-\'\.]+$/u',
             ],
 
             // Correo: obligatorio, formato válido, único y restringido únicamente a @merida.tecnm.mx

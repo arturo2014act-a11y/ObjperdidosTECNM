@@ -80,9 +80,10 @@
             <p class="text-muted small mb-4">
                 No hay objetos que coincidan con los criterios de búsqueda o no se han publicado reportes recientemente.
             </p>
-            <a href="{{ route('items.create') }}" class="btn btn-tecnm btn-sm">
+            {{-- TEMPORALMENTE DESHABILITADO --}}
+            <button class="btn btn-tecnm btn-sm" disabled title="Funci&oacute;n temporalmente deshabilitada">
                 <i class="bi bi-plus-circle me-1"></i> Reportar un Objeto Ahora
-            </a>
+            </button>
         </div>
     </div>
 @else
@@ -91,13 +92,13 @@
             <div class="col-12 col-md-6 col-xl-4">
                 <div class="card card-custom h-100 bg-white border-0 shadow-sm d-flex flex-column">
                     {{-- Imagen de la publicación (RF-13, RF-42) --}}
-                    <div class="position-relative bg-light rounded-top text-center overflow-hidden" style="height: 200px;">
+                    <div class="position-relative bg-light rounded-top text-center overflow-hidden d-flex align-items-center justify-content-center" style="height: 220px;">
                         @if ($item->image_path && Storage::disk('public')->exists($item->image_path))
-                            <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}" class="w-100 h-100 object-fit-cover">
+                            <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}" class="w-100 h-100" style="object-fit: contain; padding: 8px;">
                         @else
                             <div class="d-flex flex-column align-items-center justify-content-center h-100 text-muted">
                                 <i class="bi {{ $item->type === 'perdido' ? 'bi-question-circle' : 'bi-box-seam' }} fs-1 opacity-50"></i>
-                                <span class="small mt-1 text-secondary">Sin imagen disponible</span>
+                                <span class="small mt-1 text-secondary text-center px-2">Estamos buscando la imagen por favor espere...</span>
                             </div>
                         @endif
 

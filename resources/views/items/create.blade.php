@@ -35,7 +35,7 @@
                                 <i class="bi bi-search fs-3"></i>
                                 <div>
                                     <div class="fw-bold">Perdí un objeto</div>
-                                    <small class="text-muted d-block" style="font-size: 0.75rem;">Se publicará de forma inmediata en el muro institucional.</small>
+                                    <small class="text-muted d-block" style="font-size: 0.75rem;">Pasará a revisión y aprobación por Prefectura antes de mostrarse en el muro.</small>
                                 </div>
                             </label>
                         </div>

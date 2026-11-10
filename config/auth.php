@@ -103,6 +103,37 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Email Verification Link Expiration
+    |--------------------------------------------------------------------------
+    |
+    | Número de minutos que un enlace de verificación de correo es válido.
+    | Configurable mediante la variable de entorno VERIFICATION_EXPIRE en .env.
+    | Por defecto: 60 minutos (1 hora).
+    |
+    */
+    'verification' => [
+        'expire' => env('VERIFICATION_EXPIRE', 60),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Login Rate Limiting (RF-65)
+    |--------------------------------------------------------------------------
+    |
+    | Umbral máximo de intentos fallidos antes de bloquear temporalmente el acceso
+    | y duración (en segundos) que durará dicho bloqueo.
+    | Se puede configurar desde el archivo .env:
+    | - AUTH_LOGIN_MAX_ATTEMPTS: Número de intentos (default: 5)
+    | - AUTH_LOGIN_DECAY_SECONDS: Segundos de penalización (default: 60)
+    |
+    */
+    'throttle' => [
+        'max_attempts' => (int) env('AUTH_LOGIN_MAX_ATTEMPTS', 5),
+        'decay_seconds' => (int) env('AUTH_LOGIN_DECAY_SECONDS', 60),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Password Confirmation Timeout
     |--------------------------------------------------------------------------
     |
