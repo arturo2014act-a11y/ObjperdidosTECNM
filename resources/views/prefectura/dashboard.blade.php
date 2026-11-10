@@ -430,91 +430,97 @@
                         <p class="text-muted mt-2 mb-0">No se encontraron publicaciones con los criterios seleccionados.</p>
                     </div>
                 @else
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-light small">
+                    <div class="table-responsive bg-white rounded-3 shadow-sm border">
+                        <table class="table-prefectura table table-hover align-middle mb-0">
+                            <thead>
                                 <tr>
-                                    <th>Folio</th>
-                                    <th>Tipo</th>
-                                    <th>Objeto</th>
-                                    <th>Ubicación</th>
-                                    <th>Estado Actual</th>
-                                    <th>Datos del Autor</th>
-                                    <th class="text-end">Operaciones Prefectura</th>
+                                    <th style="width: 70px;">Folio</th>
+                                    <th style="width: 110px;">Tipo</th>
+                                    <th>Objeto / Descripción</th>
+                                    <th style="width: 140px;">Ubicación</th>
+                                    <th style="width: 120px;">Estado</th>
+                                    <th style="width: 220px;">Autor Registrado</th>
+                                    <th class="text-end" style="width: 190px;">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($managedItems as $item)
                                     <tr>
-                                        <td><span class="badge bg-secondary">#{{ $item->id }}</span></td>
+                                        <td>
+                                            <span class="text-secondary fw-bold" style="font-size: 0.8rem;">#{{ $item->id }}</span>
+                                        </td>
                                         <td>
                                             @if ($item->type === 'perdido')
-                                                <span class="badge bg-danger text-uppercase">Perdido</span>
+                                                <span class="badge badge-subtle-perdido px-2 py-1 rounded-pill">
+                                                    <i class="bi bi-search me-1"></i>PERDIDO
+                                                </span>
                                             @else
-                                                <span class="badge bg-success text-uppercase">Encontrado</span>
+                                                <span class="badge badge-subtle-encontrado px-2 py-1 rounded-pill">
+                                                    <i class="bi bi-box-seam me-1"></i>HALLAZGO
+                                                </span>
                                             @endif
                                         </td>
                                         <td>
-                                            <div class="fw-bold text-tecnm">{{ $item->name }}</div>
-                                            <small class="text-muted">{{ Str::limit($item->description, 50) }}</small>
+                                            <div class="fw-bold text-dark" style="font-size: 0.9rem;">{{ $item->name }}</div>
+                                            <div class="text-muted small" style="line-height: 1.3;">{{ Str::limit($item->description, 65) }}</div>
                                             @if ($item->rejection_reason)
-                                                <div class="small text-danger fst-italic mt-1">
-                                                    <strong>Motivo:</strong> {{ $item->rejection_reason }}
+                                                <div class="small text-danger fst-italic mt-1" style="font-size: 0.75rem;">
+                                                    <i class="bi bi-info-circle me-1"></i>Motivo: {{ $item->rejection_reason }}
                                                 </div>
                                             @endif
                                         </td>
                                         <td>
-                                            <span class="small">{{ $item->area }}</span>
+                                            <div class="small text-dark fw-semibold"><i class="bi bi-geo-alt text-muted me-1"></i>{{ $item->area }}</div>
                                         </td>
                                         <td>
                                             @switch($item->status)
                                                 @case('publicado')
-                                                    <span class="badge bg-primary">Activo / Muro</span>
+                                                    <span class="badge badge-status-activo px-2 py-1 rounded-pill small">Activo en Muro</span>
                                                     @break
                                                 @case('devuelto')
-                                                    <span class="badge bg-success"><i class="bi bi-box2-heart me-1"></i>Devuelto</span>
+                                                    <span class="badge badge-status-devuelto px-2 py-1 rounded-pill small"><i class="bi bi-check2-circle me-1"></i>Devuelto</span>
                                                     @break
                                                 @case('rechazado')
-                                                    <span class="badge bg-danger">Rechazado</span>
+                                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 rounded-pill small">Rechazado</span>
                                                     @break
                                                 @case('cerrado')
-                                                    <span class="badge bg-dark">Cerrado</span>
+                                                    <span class="badge badge-status-cerrado px-2 py-1 rounded-pill small">Cerrado</span>
                                                     @break
                                                 @default
-                                                    <span class="badge bg-secondary">{{ ucfirst($item->status) }}</span>
+                                                    <span class="badge bg-light text-dark border px-2 py-1 rounded-pill small">{{ ucfirst($item->status) }}</span>
                                             @endswitch
                                         </td>
 
                                         {{-- PRIVACIDAD DE DATOS (RF-44) --}}
                                         <td>
-                                            <div class="author-box py-1 px-2">
-                                                <div class="fw-bold small text-dark">
-                                                    <i class="bi bi-person me-1"></i>{{ $item->user->name ?? 'N/D' }}
+                                            <div class="author-box" style="line-height: 1.25;">
+                                                <div class="fw-bold text-dark" style="font-size: 0.8rem;">
+                                                    <i class="bi bi-person text-secondary me-1"></i>{{ $item->user->name ?? 'N/D' }}
                                                 </div>
-                                                <div class="small text-muted">
-                                                    <i class="bi bi-envelope me-1"></i>{{ $item->user->email ?? 'N/D' }}
+                                                <div class="text-muted" style="font-size: 0.75rem;">
+                                                    <i class="bi bi-envelope text-secondary me-1"></i>{{ $item->user->email ?? 'N/D' }}
                                                 </div>
                                             </div>
                                         </td>
 
                                         <td class="text-end">
-                                            <div class="d-inline-flex gap-1">
+                                            <div class="d-inline-flex gap-1 align-items-center">
                                                 {{-- ACCIÓN: Marcar como Devuelto (RF-14, RF-54) --}}
                                                 @if ($item->type === 'encontrado' && in_array($item->status, ['publicado', 'pendiente']))
-                                                    <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalMarkReturned{{ $item->id }}" title="Marcar como Devuelto presencialmente">
-                                                        <i class="bi bi-box2-check me-1"></i> Marcar Devuelto
+                                                    <button type="button" class="btn btn-sm btn-outline-success py-1 px-2" style="font-size: 0.78rem;" data-bs-toggle="modal" data-bs-target="#modalMarkReturned{{ $item->id }}" title="Marcar como Devuelto presencialmente">
+                                                        <i class="bi bi-box2-check me-1"></i>Devolver
                                                     </button>
                                                 @endif
 
                                                 {{-- ACCIÓN: Revertir Devuelto a Activo (RF-55) --}}
                                                 @if ($item->status === 'devuelto')
-                                                    <button type="button" class="btn btn-sm btn-outline-warning text-dark" data-bs-toggle="modal" data-bs-target="#modalRevertReturned{{ $item->id }}" title="Revertir entrega con motivo obligatorio">
-                                                        <i class="bi bi-arrow-counterclockwise me-1"></i> Revertir a Activo
+                                                    <button type="button" class="btn btn-sm btn-outline-warning text-dark py-1 px-2" style="font-size: 0.78rem;" data-bs-toggle="modal" data-bs-target="#modalRevertReturned{{ $item->id }}" title="Revertir entrega con motivo obligatorio">
+                                                        <i class="bi bi-arrow-counterclockwise me-1"></i>Revertir
                                                     </button>
                                                 @endif
 
                                                 {{-- Ver Historial de Auditoría individual (RF-56) --}}
-                                                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalItemHistory{{ $item->id }}" title="Ver historial de auditoría de este objeto">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.78rem;" data-bs-toggle="modal" data-bs-target="#modalItemHistory{{ $item->id }}" title="Ver historial de auditoría de este objeto">
                                                     <i class="bi bi-clock-history"></i>
                                                 </button>
                                             </div>

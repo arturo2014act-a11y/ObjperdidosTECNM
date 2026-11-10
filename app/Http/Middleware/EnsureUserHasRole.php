@@ -21,8 +21,8 @@ class EnsureUserHasRole
             abort(404);
         }
 
-        // RF-62: Restricción estricta por roles autorizados en la ruta
-        if (in_array($user->role, $roles, true)) {
+        // Permitir acceso si el usuario tiene el rol asignado o si es rol admin (supervisión global)
+        if (in_array($user->role, $roles, true) || $user->role === 'admin') {
             return $next($request);
         }
 

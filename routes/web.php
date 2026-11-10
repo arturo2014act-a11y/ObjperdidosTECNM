@@ -31,6 +31,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/mis-publicaciones', [ItemController::class, 'myItems'])->name('items.my-items');
     Route::post('/items/{item}/request-closure', [ItemController::class, 'requestClosure'])->name('items.request-closure');
 
+    // Comunicación y Orientación Institucional de Pertenencias (API / Chat)
+    Route::get('/items/{item}/messages', [\App\Http\Controllers\ItemMessageController::class, 'index'])->name('items.messages.index');
+    Route::post('/items/{item}/messages', [\App\Http\Controllers\ItemMessageController::class, 'store'])->name('items.messages.store');
+
     // Perfil de Usuario (RF-81 a RF-85)
     Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/perfil/nombre', [ProfileController::class, 'updateName'])->name('profile.update-name');

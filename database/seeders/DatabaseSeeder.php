@@ -16,9 +16,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // 0. Cuenta de Administrador General (RF-27)
-        $admin = User::create([
+        $admin = User::firstOrCreate(['email' => 'admin@merida.tecnm.mx'], [
             'name' => 'Administrador General TecNM',
-            'email' => 'admin@merida.tecnm.mx',
             'password' => Hash::make('TecNM#2026'),
             'role' => 'admin',
             'is_active' => true,
@@ -26,9 +25,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // 1. Cuenta de Prefectura
-        $prefecto = User::create([
+        $prefecto = User::firstOrCreate(['email' => 'prefectura@merida.tecnm.mx'], [
             'name' => 'Lic. Carlos Canché Pech',
-            'email' => 'prefectura@merida.tecnm.mx',
             'password' => Hash::make('TecNM#2026'),
             'role' => 'prefectura',
             'is_active' => true,
@@ -36,18 +34,16 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // 2. Usuarios de la comunidad académica
-        $estudiante1 = User::create([
+        $estudiante1 = User::firstOrCreate(['email' => 'rodrigo.alonzo@merida.tecnm.mx'], [
             'name' => 'Rodrigo Alonzo Medina',
-            'email' => 'rodrigo.alonzo@merida.tecnm.mx',
             'password' => Hash::make('TecNM#2026'),
             'role' => 'usuario_general',
             'is_active' => true,
             'email_verified_at' => now(),
         ]);
 
-        $estudiante2 = User::create([
+        $estudiante2 = User::firstOrCreate(['email' => 'mariana.yam@merida.tecnm.mx'], [
             'name' => 'Mariana Yam Puc',
-            'email' => 'mariana.yam@merida.tecnm.mx',
             'password' => Hash::make('TecNM#2026'),
             'role' => 'usuario_general',
             'is_active' => true,

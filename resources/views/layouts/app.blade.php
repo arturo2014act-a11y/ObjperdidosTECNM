@@ -99,10 +99,72 @@
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08);
         }
         .author-box {
-            background-color: #f8f9fa;
-            border-left: 4px solid var(--tecnm-red);
-            padding: 0.6rem 0.85rem;
+            background-color: #f8fafc;
+            border-left: 3px solid #94a3b8;
+            padding: 0.4rem 0.65rem;
             border-radius: 0.25rem;
+        }
+        /* Estilos formales para tablas administrativas */
+        .table-prefectura {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+        .table-prefectura thead th {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-weight: 700;
+            padding: 10px 14px;
+            border-bottom: 2px solid #cbd5e1;
+            border-top: none;
+            vertical-align: middle;
+        }
+        .table-prefectura tbody td {
+            padding: 12px 14px;
+            font-size: 0.85rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #e2e8f0;
+            border-top: none;
+        }
+        .table-prefectura tbody tr:hover {
+            background-color: #f8fafc;
+        }
+        .badge-subtle-perdido {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            font-weight: 600;
+            font-size: 0.72rem;
+            letter-spacing: 0.03em;
+        }
+        .badge-subtle-encontrado {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+            font-weight: 600;
+            font-size: 0.72rem;
+            letter-spacing: 0.03em;
+        }
+        .badge-status-activo {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+            font-weight: 600;
+        }
+        .badge-status-devuelto {
+            background-color: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+            font-weight: 600;
+        }
+        .badge-status-cerrado {
+            background-color: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            font-weight: 600;
         }
     </style>
 </head>

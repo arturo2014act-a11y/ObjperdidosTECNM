@@ -51,6 +51,14 @@ class Item extends Model
     }
 
     /**
+     * Relación: Mensajes y consultas de orientación sobre la pertenencia.
+     */
+    public function messages(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ItemMessage::class)->oldest();
+    }
+
+    /**
      * Relación: Una publicación tiene un historial de auditoría de acciones (RF-56).
      */
     public function logs(): \Illuminate\Database\Eloquent\Relations\HasMany
