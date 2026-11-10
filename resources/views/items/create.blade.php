@@ -35,7 +35,7 @@
                                 <i class="bi bi-search fs-3"></i>
                                 <div>
                                     <div class="fw-bold">Perdí un objeto</div>
-                                    <small class="text-muted d-block" style="font-size: 0.75rem;">Pasará a revisión y aprobación por Prefectura antes de mostrarse en el muro.</small>
+                                    <small class="text-muted d-block" style="font-size: 0.75rem;">Se publicará inmediatamente en el muro institucional.</small>
                                 </div>
                             </label>
                         </div>
@@ -45,7 +45,11 @@
                                 <i class="bi bi-box-seam fs-3"></i>
                                 <div>
                                     <div class="fw-bold">Encontré un objeto</div>
-                                    <small class="text-muted d-block" style="font-size: 0.75rem;">Requiere entrega física y aprobación de Prefectura.</small>
+                                    @if (Auth::check() && Auth::user()->role === 'prefectura')
+                                        <small class="text-muted d-block" style="font-size: 0.75rem;">Publicación directa en el muro bajo resguardo de Prefectura.</small>
+                                    @else
+                                        <small class="text-muted d-block" style="font-size: 0.75rem;">Requiere entrega física y aprobación de Prefectura.</small>
+                                    @endif
                                 </div>
                             </label>
                         </div>
@@ -55,8 +59,13 @@
                 {{-- Aviso contextual según el tipo seleccionado --}}
                 <div id="foundNotice" class="alert alert-warning small d-none mb-4 shadow-sm" role="alert">
                     <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
-                    <strong>Protocolo para Objetos Encontrados:</strong>
-                    Tu reporte quedará <em>Pendiente e invisible en el muro</em> hasta que entregues físicamente el objeto en la oficina de Prefectura del Campus Poniente para constatar su custodia.
+                    @if (Auth::check() && Auth::user()->role === 'prefectura')
+                        <strong>Publicación Directa por Prefectura (SCR-47):</strong>
+                        Como cuenta de Prefectura, este objeto Encontrado se registrará y publicará <strong>directamente en el muro</strong> sin requerir aprobación adicional, asumiendo su custodia física en el módulo.
+                    @else
+                        <strong>Protocolo para Objetos Encontrados:</strong>
+                        Tu reporte quedará <em>Pendiente e invisible en el muro</em> hasta que entregues físicamente el objeto en la oficina de Prefectura del Campus Poniente para constatar su custodia.
+                    @endif
                 </div>
 
                 {{-- Nombre del Objeto (RF-38) --}}

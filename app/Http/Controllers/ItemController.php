@@ -194,21 +194,19 @@ class ItemController extends Controller
         // Determinación del estado según Tipo y Rol
         $user = $request->user();
         if ($validated['type'] === 'perdido') {
-            if ($user->role === 'prefectura' || $user->role === 'admin') {
-                $status = 'publicado';
-                $successMessage = 'Tu publicación de objeto perdido se ha publicado correctamente en el muro.';
-            } else {
-                $status = 'pendiente';
-                $successMessage = 'Tu reporte de objeto perdido fue registrado y está pendiente de revisión y aprobación por prefectura.';
-            }
+            // Un reporte Perdido creado por cualquier usuario se publica inmediatamente
+            $status = 'publicado';
+            $successMessage = 'Tu publicación se ha publicado correctamente.';
         } else {
+            // Objeto Encontrado
             if ($user->role === 'prefectura') {
+                // SCR-47 / RF-22: Prefectura publica directamente un Encontrado sin pasar por aprobación
                 $status = 'publicado';
-                $successMessage = 'Publicación de objeto encontrado registrada directamente en el muro por Prefectura.';
+                $successMessage = 'Publicación de objeto encontrado registrada y publicada directamente en el muro por Prefectura.';
             } else {
                 // RF-19: Encontrado por usuario general queda pendiente e invisible en el muro
                 $status = 'pendiente';
-                $successMessage = 'Tu reporte fue registrado y está pendiente de entrega y aprobación por prefectura.'; // RF-59
+                $successMessage = 'Tu reporte fue registrado y está pendiente de entrega y aprobación por prefectura.';
             }
         }
 

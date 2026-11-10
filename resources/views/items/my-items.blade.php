@@ -13,10 +13,9 @@
                 Consulta el estado de tus objetos reportados, motivos de revisión y solicita el cierre de tus pertenencias.
             </p>
         </div>
-        {{-- TEMPORALMENTE DESHABILITADO --}}
-        <button class="btn btn-warning fw-bold btn-sm shadow-sm" disabled title="Funci&oacute;n temporalmente deshabilitada">
+        <a href="{{ route('items.create') }}" class="btn btn-warning fw-bold btn-sm shadow-sm">
             <i class="bi bi-plus-circle me-1"></i> Publicar Nuevo Objeto
-        </button>
+        </a>
     </div>
 </div>
 
@@ -29,10 +28,9 @@
                 <p class="text-muted small mb-4">
                     Cuando reportes un objeto perdido o encontrado en el campus, podrás darle seguimiento aquí.
                 </p>
-                {{-- TEMPORALMENTE DESHABILITADO --}}
-                <button class="btn btn-tecnm btn-sm" disabled title="Funci&oacute;n temporalmente deshabilitada">
+                <a href="{{ route('items.create') }}" class="btn btn-tecnm btn-sm">
                     <i class="bi bi-pencil-square me-1"></i> Crear mi Primer Reporte
-                </button>
+                </a>
             </div>
         @else
             <div class="table-responsive">
@@ -132,11 +130,10 @@
                                         @endif
 
                                         {{-- Si fue rechazado, opción de crear uno nuevo corregido (RF-21) --}}
-                                        {{-- TEMPORALMENTE DESHABILITADO --}}
                                         @if ($item->status === 'rechazado')
-                                            <button class="btn btn-outline-primary btn-sm" disabled title="Funci&oacute;n temporalmente deshabilitada">
+                                            <a href="{{ route('items.create') }}" class="btn btn-outline-primary btn-sm" title="Crear reporte nuevo corregido">
                                                 <i class="bi bi-arrow-repeat me-1"></i> Nuevo Reporte
-                                            </button>
+                                            </a>
                                         @endif
                                     </div>
                                 </td>

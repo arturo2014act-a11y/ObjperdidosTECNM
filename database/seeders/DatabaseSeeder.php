@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('TecNM#2026'),
             'role' => 'admin',
             'is_active' => true,
+            'email_verified_at' => now(),
         ]);
 
         // 1. Cuenta de Prefectura
@@ -31,6 +32,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('TecNM#2026'),
             'role' => 'prefectura',
             'is_active' => true,
+            'email_verified_at' => now(),
         ]);
 
         // 2. Usuarios de la comunidad académica
@@ -40,6 +42,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('TecNM#2026'),
             'role' => 'usuario_general',
             'is_active' => true,
+            'email_verified_at' => now(),
         ]);
 
         $estudiante2 = User::create([
@@ -48,6 +51,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('TecNM#2026'),
             'role' => 'usuario_general',
             'is_active' => true,
+            'email_verified_at' => now(),
         ]);
 
         // 3. Sección 1: Encontrados pendientes de aprobación (RF-50, RF-53)

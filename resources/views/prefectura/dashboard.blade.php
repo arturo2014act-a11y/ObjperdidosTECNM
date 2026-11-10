@@ -44,7 +44,7 @@
 <ul class="nav nav-pills nav-fill bg-white p-2 rounded-3 shadow-sm mb-4" id="prefecturaTabs" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active fw-semibold position-relative py-3" id="found-tab" data-bs-toggle="tab" data-bs-target="#found-pane" type="button" role="tab">
-            <i class="bi bi-box-arrow-in-down me-2 text-warning"></i> 1. Solicitudes por Aprobar
+            <i class="bi bi-box-arrow-in-down me-2 text-warning"></i> 1. Encontrados por Aprobar
             @if ($pendingFound->count() > 0)
                 <span class="badge bg-danger ms-2 rounded-pill">{{ $pendingFound->count() }}</span>
             @endif
@@ -77,17 +77,17 @@
 <div class="tab-content" id="prefecturaTabsContent">
 
     {{-- ========================================================================= --}}
-    {{-- SECCIÓN 1: SOLICITUDES PENDIENTES DE APROBACIÓN (RF-50, RF-53, RF-21) --}}
+    {{-- SECCIÓN 1: OBJETOS ENCONTRADOS PENDIENTES DE APROBACIÓN (RF-50, RF-53, RF-21) --}}
     {{-- ========================================================================= --}}
     <div class="tab-pane fade show active" id="found-pane" role="tabpanel" tabindex="0">
         <div class="card card-custom mb-4">
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                 <div>
                     <h5 class="fw-bold mb-0 text-tecnm">
-                        <i class="bi bi-hourglass-split me-2 text-warning"></i>Solicitudes Pendientes de Aprobación
+                        <i class="bi bi-hourglass-split me-2 text-warning"></i>Objetos Encontrados Pendientes de Aprobación
                     </h5>
                     <small class="text-muted">
-                        Publicaciones de objetos encontrados (verificación de entrega física) y perdidos (revisión de veracidad) pendientes de validación.
+                        Publicaciones de objetos encontrados reportados por usuarios generales, pendientes de entrega física y validación presencial en Prefectura (RF-50, RF-53).
                     </small>
                 </div>
                 <span class="badge bg-warning text-dark px-3 py-2">
@@ -99,7 +99,7 @@
                 @if ($pendingFound->isEmpty())
                     <div class="text-center py-5">
                         <i class="bi bi-inbox fs-1 text-muted"></i>
-                        <p class="text-muted mt-2 mb-0">No hay publicaciones pendientes de revisión en este momento.</p>
+                        <p class="text-muted mt-2 mb-0">No hay objetos encontrados pendientes de recepción física en este momento.</p>
                     </div>
                 @else
                     <div class="row g-3">
@@ -167,7 +167,7 @@
                                     <div class="card-footer bg-white border-top-0 pt-0 pb-3 d-flex gap-2">
                                         {{-- Botón Modal Aprobar --}}
                                         <button type="button" class="btn btn-sm btn-success flex-grow-1" data-bs-toggle="modal" data-bs-target="#modalApproveFound{{ $item->id }}">
-                                            <i class="bi bi-check-lg me-1"></i> {{ $item->type === 'perdido' ? 'Aprobar Reporte' : 'Aprobar Recepción' }}
+                                            <i class="bi bi-check-lg me-1"></i> Aprobar Recepción
                                         </button>
                                         {{-- Botón Modal Rechazar --}}
                                         <button type="button" class="btn btn-sm btn-outline-danger flex-grow-1" data-bs-toggle="modal" data-bs-target="#modalRejectFound{{ $item->id }}">
@@ -189,26 +189,17 @@
                                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <p class="mb-2">Vas a aprobar el reporte de objeto {{ $item->type }}: <strong>{{ $item->name }}</strong>.</p>
+                                            <p class="mb-2">Vas a aprobar el reporte de objeto encontrado: <strong>{{ $item->name }}</strong>.</p>
                                             <p class="small text-muted mb-3">Una vez aprobado, pasará al estado <strong>Publicado</strong> y se mostrará en el muro institucional.</p>
                                             
-                                            @if ($item->type === 'encontrado')
-                                                <div class="alert alert-light border-warning p-3">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="confirm_physical_receipt" id="confirm_physical_receipt_{{ $item->id }}" value="1" required>
-                                                        <label class="form-check-label fw-bold text-dark small" for="confirm_physical_receipt_{{ $item->id }}">
-                                                            Confirmo formalmente que el objeto ha sido entregado en custodia física en el módulo de Prefectura del TecNM.
-                                                        </label>
-                                                    </div>
+                                            <div class="alert alert-light border-warning p-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="confirm_physical_receipt" id="confirm_physical_receipt_{{ $item->id }}" value="1" required>
+                                                    <label class="form-check-label fw-bold text-dark small" for="confirm_physical_receipt_{{ $item->id }}">
+                                                        (RF-53) Confirmo formalmente que el objeto ha sido entregado en custodia física en el módulo de Prefectura del TecNM.
+                                                    </label>
                                                 </div>
-                                            @else
-                                                <div class="alert alert-light border-success p-3">
-                                                    <i class="bi bi-shield-check text-success me-2 fs-5 align-middle"></i>
-                                                    <span class="small text-muted align-middle">
-                                                        Como prefecto, has revisado que la información del reporte es coherente y apta para publicarse en la comunidad del TecNM.
-                                                    </span>
-                                                </div>
-                                            @endif
+                                            </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>

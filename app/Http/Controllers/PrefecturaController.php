@@ -21,7 +21,7 @@ class PrefecturaController extends Controller
         // Sección 1: Encontrados pendientes de aprobación (RF-50)
         // Invisibles en el muro público, se muestran con datos del autor (RF-44)
         $pendingFound = Item::with(['user', 'logs.user'])
-            
+            ->where('type', 'encontrado')
             ->where('status', 'pendiente')
             ->latest()
             ->get();
@@ -78,26 +78,22 @@ class PrefecturaController extends Controller
      */
     public function approveFound(Request $request, Item $item): RedirectResponse
     {
-        if ($item->status !== 'pendiente') {
+        if ($item->type !== 'encontrado' || $item->status !== 'pendiente') {
             return back()->with('error', 'El objeto seleccionado no es válido para aprobación.');
         }
 
-        if ($item->type === 'encontrado') {
-            $request->validate([
-                'confirm_physical_receipt' => ['required', 'accepted'],
-            ], [
-                'confirm_physical_receipt.accepted' => 'Es obligatorio confirmar que el objeto fue recibido físicamente en la oficina de Prefectura.',
-            ]);
-        }
+        $request->validate([
+            'confirm_physical_receipt' => ['required', 'accepted'],
+        ], [
+            'confirm_physical_receipt.accepted' => 'Es obligatorio confirmar que el objeto fue recibido físicamente en la oficina de Prefectura.',
+        ]);
 
         $item->update([
             'status' => 'publicado',
             'rejection_reason' => null,
         ]);
 
-        $auditReason = $item->type === 'encontrado'
-            ? 'Objeto recibido físicamente en Prefectura y aprobado para publicación en muro.'
-            : 'Reporte de objeto perdido revisado y aprobado para publicación en muro.';
+        $auditReason = 'Objeto recibido físicamente en Prefectura y aprobado para publicación en muro.';
 
         // Registrar auditoría interna (RF-56)
         $this->recordAuditLog(
